@@ -1,6 +1,8 @@
 package com.ridersalmanac.riders_almanac.events;
 
 import com.ridersalmanac.riders_almanac.users.User;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 
@@ -17,5 +19,16 @@ public class Event {
     private String state;
     private String zip;
     private String description;
+
+
+    @Getter
+    @Setter
+    private Status status = Status.ACTIVE;
+    public enum Status { ACTIVE, CANCELLED }
+    private Boolean isDeleted = false;
+    private Instant deletedAt;
+    private User deletedBy;
+    private Instant createdAt;
+    private Instant updatedAt;
 
 }
