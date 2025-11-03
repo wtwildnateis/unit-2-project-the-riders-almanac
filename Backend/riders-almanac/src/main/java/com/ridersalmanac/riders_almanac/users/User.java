@@ -1,20 +1,24 @@
 package com.ridersalmanac.riders_almanac.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.management.relation.Role;
+import com.ridersalmanac.riders_almanac.users.Role;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+        @Index(name = "idx_users_username", columnList = "username", unique = true),
+        @Index(name = "idx_users_email", columnList = "email", unique = true)
+})
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,13 +30,15 @@ public class User {
     @Column(nullable = false, unique = true, length = 255)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 255)
-    private String password;
+    @JsonIgnore
+    @Column(name = "password_hash", nullable = false, length = 255)
+    private String passwordHash;
 
     @Column(name = "display_name", length = 100)
     private String displayName;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 16)
     private Status status = Status.ACTIVE;
 
     public enum Status {ACTIVE, SUSPENDED}
@@ -41,8 +47,13 @@ public class User {
     @JoinTable(name="user_roles",
     joinColumns=@JoinColumn(name="user_id"),
     inverseJoinColumns=@JoinColumn(name="role_id"))
+    @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
 
-    @CreationTimestamp private Instant createdAt;
-    @UpdateTimestamp private Instant updatedAt;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Instant createdAt;
+
+    @UpdateTimestamp
+    private Instant updatedAt;
 }

@@ -1,17 +1,18 @@
 package com.ridersalmanac.riders_almanac.users;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Entity @Table(name="roles")
+@Entity
+@Table(name="roles", uniqueConstraints = { @UniqueConstraint(name = "uk_roles_name", columnNames = "name")})
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Role {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Short id;
+    private Long id;
 
-    @Column(nullable=false, unique=true, length=20)
+    @Column(nullable=false, length=20)
     private String name; // "USER", "ADMIN", "MOD"
 }
