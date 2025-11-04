@@ -15,21 +15,26 @@ import java.time.Instant;
                 @Index(name = "idx_events_owner", columnList = "owner_id"),
         @Index(name = "idx_events_start_time", columnList = "start_time"),
         @Index(name = "idx_events_city_state", columnList = "city,state"),
-        @Index(name = "idx_events_status_deleted", columnList = "status,is_deleted")
+        @Index(name = "idx_events_status_deleted", columnList = "status, is_deleted")
         }
 )
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Event {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //ownership for the created event
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
+    @ToString.Exclude
     private User owner;
 
+    //Event details
     @Column(nullable=false, length = 255)
     private String title;
 
@@ -39,12 +44,15 @@ public class Event {
     @Column(name = "flyer_url", length = 500)
     private String flyer; // URL for flyer hosted through cloudinary
 
+    //Time in UTC
     @Column(name = "start_time", nullable = false)
     private Instant start;
 
     @Column(name = "end_time")
     private Instant end;
 
+
+    // location details
     @Column(length = 120)
     private String street;
 
@@ -57,12 +65,14 @@ public class Event {
     @Column(length = 10)
     private String zip;
 
+    @Lob
     @Column(columnDefinition = "TEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
     private Status status = Status.ACTIVE;
+
     public enum Status { ACTIVE, CANCELLED }
 
     @Column(name = "is_deleted", nullable = false)
@@ -73,6 +83,7 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_user_id")
+    @ToString.Exclude
     private User deletedBy;
 
     @CreationTimestamp
