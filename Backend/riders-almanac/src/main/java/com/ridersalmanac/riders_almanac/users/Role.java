@@ -8,6 +8,8 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Role {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
