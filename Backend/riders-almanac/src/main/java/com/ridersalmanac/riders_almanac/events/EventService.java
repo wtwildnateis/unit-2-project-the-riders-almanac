@@ -58,6 +58,7 @@ public class EventService {
         return EventMapper.toDto(e);
     }
 
+    @Transactional
     public EventResponse update(Long id, Long currentUserId, UpdateEventRequest req) {
         var e = requireEvent(id);
         var current = requireUser(currentUserId);
