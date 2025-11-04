@@ -3,10 +3,12 @@ package com.ridersalmanac.riders_almanac.events;
 import com.ridersalmanac.riders_almanac.events.dto.CreateEventRequest;
 import com.ridersalmanac.riders_almanac.events.dto.EventResponse;
 import com.ridersalmanac.riders_almanac.events.dto.UpdateEventRequest;
-import jakarta.validation.Valid;
+import com.ridersalmanac.riders_almanac.users.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.List;
 public class EventController {
 
     private final EventService service;
+    private final UserRepository users;
+
 
     // Calendar list
     @GetMapping
@@ -30,29 +34,38 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public EventResponse get(@PathVariable Long id) {
+    public EventResponse get(
+            @PathVariable Long id) {
         return service.get(id);
     }
 
     @PostMapping
-    public EventResponse create(@Valid @RequestBody CreateEventRequest req) {
-        return service.create(req);
+    public EventResponse create(
+            @RequestBody CreateEventRequest req,
+            @AuthenticationPrincipal UserDetails principal) {
+        Long ownerId = users.findByUsername(principal.getUsername())
+                .orElseThrow().getId();
+        var fixed = new CreateEventRequest(
+                ownerId, req.title(), req.type(), req.flyer(), req.start(), req.end(),
+                req.street(), req.city(), req.state(), req.zip(), req.description()
+        );
+        return service.create(fixed);
     }
 
     @PutMapping("/{id}")
     public EventResponse update(
             @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long currentUserId,
-            @Valid @RequestBody UpdateEventRequest req
-    ) {
+            @AuthenticationPrincipal UserDetails principal,
+            @RequestBody UpdateEventRequest req) {
+        Long currentUserId = users.findByUsername(principal.getUsername()).orElseThrow().getId();
         return service.update(id, currentUserId, req);
     }
 
     @DeleteMapping("/{id}")
     public void delete(
             @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long currentUserId
-    ) {
+            @AuthenticationPrincipal UserDetails principal) {
+        Long currentUserId = users.findByUsername(principal.getUsername()).orElseThrow().getId();
         service.delete(id, currentUserId);
     }
 }
