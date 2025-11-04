@@ -7,19 +7,21 @@ import com.ridersalmanac.riders_almanac.events.dto.UpdateEventRequest;
 import com.ridersalmanac.riders_almanac.users.Role;
 import com.ridersalmanac.riders_almanac.users.User;
 import com.ridersalmanac.riders_almanac.users.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
 
-
+@Service
+@RequiredArgsConstructor
 public class EventService {
 
     private final EventRepository events;
     private final UserRepository users;
 
-    /* ===== Queries ===== */
-
-
+    @Transactional
     public EventResponse create(CreateEventRequest req) {
         User owner = users.findById(req.ownerId())
                 .orElseThrow(() -> new IllegalArgumentException("Owner not found"));
@@ -76,6 +78,7 @@ public class EventService {
         return EventMapper.toDto(e);
     }
 
+    @Transactional
     public void delete(Long id, Long currentUserId) {
         var e = requireEvent(id);
         var current = requireUser(currentUserId);
