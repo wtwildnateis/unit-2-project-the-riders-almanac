@@ -6,7 +6,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.ridersalmanac.riders_almanac.users.Role;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,16 +38,18 @@ public class User {
     @Column(name = "display_name", length = 100)
     private String displayName;
 
+    public enum Status {ACTIVE, SUSPENDED}
+
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
     private Status status = Status.ACTIVE;
 
-    public enum Status {ACTIVE, SUSPENDED}
-
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="user_roles",
-    joinColumns=@JoinColumn(name="user_id"),
-    inverseJoinColumns=@JoinColumn(name="role_id"))
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
 

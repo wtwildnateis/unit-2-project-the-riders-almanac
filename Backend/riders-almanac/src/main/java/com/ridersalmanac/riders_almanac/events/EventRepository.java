@@ -1,18 +1,25 @@
 package com.ridersalmanac.riders_almanac.events;
 
-import com.ridersalmanac.riders_almanac.events.Event.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    // Calendar events, all active non deleted events
-    List<Event> findByIsDeletedFalseAndStatusAndStartBetweenOrderByStartAsc(
-            Status status, Instant from, Instant to
-    );
+    @Query("""
+            select e from Event e
+            where e.isDeleted = false
+            and (:from is null or e.startTime >= :from)
+            and (:to   is null or e.startTime <  :to)
+            order by e.startTime asc
+            """)
 
-    // All upcoming events
-    List<Event> findByIsDeletedFalseAndStatusOrderByStartAsc(Status status);
+    List<Event> findWindow(Instant from, Instant to);
+
+    Optional<Event> findByIdAndIsDeletedFalse(Long id);
+
+    boolean existsByIdAndOwnerIdAndIsDeletedFalse(Long id, Long ownerId);
 }
