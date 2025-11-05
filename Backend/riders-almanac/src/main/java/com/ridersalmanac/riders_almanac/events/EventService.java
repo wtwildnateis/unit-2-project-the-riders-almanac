@@ -46,10 +46,7 @@ public class EventService {
     }
 
     public List<EventResponse> list(Instant from, Instant to) {
-        var list = (from != null && to != null)
-                ? events.findByIsDeletedFalseAndStatusAndStartBetweenOrderByStartAsc(Event.Status.ACTIVE, from, to)
-                : events.findByIsDeletedFalseAndStatusOrderByStartAsc(Event.Status.ACTIVE);
-
+        var list = events.findWindow(from, to, Event.Status.ACTIVE);
         return list.stream().map(EventMapper::toDto).toList();
     }
 

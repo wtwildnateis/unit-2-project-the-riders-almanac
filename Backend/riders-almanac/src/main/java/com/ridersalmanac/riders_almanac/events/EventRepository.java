@@ -2,6 +2,7 @@ package com.ridersalmanac.riders_almanac.events;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.List;
@@ -16,8 +17,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             and (:to   is null or e.startTime <  :to)
             order by e.startTime asc
             """)
-
-    List<Event> findWindow(Instant from, Instant to);
+    List<Event> findWindow(
+            @Param("from") Instant from,
+            @Param("to") Instant to,
+            @Param("status") Event.Status status
+    );
 
     Optional<Event> findByIdAndIsDeletedFalse(Long id);
 
