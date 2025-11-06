@@ -1,4 +1,7 @@
 package com.ridersalmanac.riders_almanac.forum.dto;
 
-public class CommentUpdateRequest {
-}
+import jakarta.validation.constraints.*;
+
+public record CommentUpdateRequest(
+        @NotBlank String body
+) {}

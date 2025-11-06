@@ -1,4 +1,5 @@
 package com.ridersalmanac.riders_almanac.forum;
 
-public class PostImageRepository {
-}
+import org.springframework.data.jpa.repository.*;
+
+public interface PostImageRepository extends JpaRepository<PostImage, Long> {}
