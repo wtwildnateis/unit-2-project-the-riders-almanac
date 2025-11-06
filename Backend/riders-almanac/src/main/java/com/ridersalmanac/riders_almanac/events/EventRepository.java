@@ -11,12 +11,13 @@ import java.util.Optional;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("""
-            select e from Event e
-            where e.isDeleted = false
-            and (:from is null or e.startTime >= :from)
-            and (:to   is null or e.startTime <  :to)
-            order by e.startTime asc
-            """)
+        select e from Event e
+        where e.isDeleted = false
+          and (:status is null or e.status = :status)
+          and (:from  is null or e.start >= :from)
+          and (:to    is null or e.start <  :to)
+        order by e.start asc
+    """)
     List<Event> findWindow(
             @Param("from") Instant from,
             @Param("to") Instant to,
@@ -25,5 +26,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Optional<Event> findByIdAndIsDeletedFalse(Long id);
 
-    boolean existsByIdAndOwnerIdAndIsDeletedFalse(Long id, Long ownerId);
+    boolean existsByIdAndOwner_IdAndIsDeletedFalse(Long id, Long ownerId);
 }
