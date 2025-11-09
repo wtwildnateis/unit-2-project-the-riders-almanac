@@ -97,6 +97,15 @@ public class ForumController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/posts/{id}/comments")
+    public PageResponse<CommentResponse> listComments(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return service.comments(id, page, size);
+    }
+
 // small helper
 
     private Long currentUserId(UserDetails principal) {

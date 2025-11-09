@@ -7,9 +7,6 @@ import java.time.Instant;
 
 public record CreateEventRequest(
 
-        @NotNull
-        Long ownerId,
-
         @NotBlank
         String title,
 
@@ -20,6 +17,7 @@ public record CreateEventRequest(
         @NotNull
         Instant start,
 
+        @NotNull
         Instant end,
 
         String street,

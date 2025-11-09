@@ -43,6 +43,10 @@ public class Post {
     private List<PostImage> images = new ArrayList<>();
 
     @Builder.Default
+    @Column(name="is_locked", nullable = false)
+    private boolean isLocked = false;
+
+    @Builder.Default
     @Column(name="is_deleted", nullable=false)
     private boolean isDeleted = false;
 

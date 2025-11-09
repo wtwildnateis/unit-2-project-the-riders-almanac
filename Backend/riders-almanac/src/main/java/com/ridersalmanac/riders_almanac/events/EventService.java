@@ -22,8 +22,8 @@ public class EventService {
     private final UserRepository users;
 
     @Transactional
-    public EventResponse create(CreateEventRequest req) {
-        User owner = users.findById(req.ownerId())
+    public EventResponse create(Long ownerId, CreateEventRequest req) {
+        User owner = users.findById(ownerId)
                 .orElseThrow(() -> new IllegalArgumentException("Owner not found"));
 
         Event e = new Event();

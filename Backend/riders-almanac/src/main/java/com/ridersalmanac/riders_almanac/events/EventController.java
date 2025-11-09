@@ -4,6 +4,7 @@ import com.ridersalmanac.riders_almanac.events.dto.CreateEventRequest;
 import com.ridersalmanac.riders_almanac.events.dto.EventResponse;
 import com.ridersalmanac.riders_almanac.events.dto.UpdateEventRequest;
 import com.ridersalmanac.riders_almanac.users.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -41,15 +42,12 @@ public class EventController {
 
     @PostMapping
     public EventResponse create(
-            @RequestBody CreateEventRequest req,
+            @Valid @RequestBody CreateEventRequest req,
             @AuthenticationPrincipal UserDetails principal) {
         Long ownerId = users.findByUsername(principal.getUsername())
                 .orElseThrow().getId();
-        var fixed = new CreateEventRequest(
-                ownerId, req.title(), req.type(), req.flyer(), req.start(), req.end(),
-                req.street(), req.city(), req.state(), req.zip(), req.description()
-        );
-        return service.create(fixed);
+
+        return service.create(ownerId, req);
     }
 
     @PutMapping("/{id}")

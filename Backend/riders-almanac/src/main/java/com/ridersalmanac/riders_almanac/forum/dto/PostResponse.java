@@ -11,6 +11,7 @@ public record PostResponse(
         Long authorId,
         String authorUsername,
         List<String> images,
+        boolean locked,
         Instant createdAt,
         Instant updatedAt,
         Instant lastActivityAt
