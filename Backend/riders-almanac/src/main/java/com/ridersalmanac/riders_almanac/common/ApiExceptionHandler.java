@@ -84,9 +84,26 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(body(HttpStatus.BAD_REQUEST, ex.getMessage(), req));
     }
 
-    @ExceptionHandler(Exception.class)
+  /*  @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAny(Exception ex, HttpServletRequest req) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(body(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", req));
+    } */
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleAny(Exception ex, HttpServletRequest req) {
+        // TEMP for debugging – print full stack to your Run console
+        ex.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                        "timestamp", Instant.now().toString(),
+                        "status", 500,
+                        "error", "Internal Server Error",
+                        "message", ex.getClass().getSimpleName() +
+                                (ex.getMessage() != null ? (": " + ex.getMessage()) : ""),
+                        "path", req != null ? req.getRequestURI() : ""
+                ));
     }
+
 }

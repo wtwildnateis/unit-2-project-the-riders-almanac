@@ -1,0 +1,186 @@
+.modalstyle {
+    width: 300px;
+    height: auto;
+    max-height: 80vh;
+    background-color: whitesmoke;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transform-origin: top left;
+    animation: fadeInScale .4s ease-out;
+    overflow-y: auto;
+    font-family: Arial, Helvetica, sans-serif
+}
+
+.modalstyle h3 {
+    margin: 0;
+    padding-top: 10px;
+    font-size: 1.2rem;
+    color: black;
+}
+
+.modalstyle hr {
+    margin: 5px 0 10px 0;
+    border-top: 1px solid black;
+}
+
+.modalstyle label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    font-size: 14px;
+    color: black;
+    gap: 5px;
+}
+
+.modalstyle form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.modalstyle input[type="text"],
+.modalstyle input[type="datetime-local"],
+.modalstyle select,
+.modalstyle textarea,
+.modalstyle input[type="email"] {
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modalstyle textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.modalstyle input[type="file"] {
+    font-size: 14px;
+}
+
+.modal-button {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.modal-button button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modalcontainer {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    justify-content: center;
+
+}
+
+.address-section input {
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.address-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 1px;
+}
+
+
+.address-section label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    font-size: 14px;
+    color: black;
+    gap: 5px;
+}
+
+.address-section select {
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.flyer-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 0;
+}
+
+.flyer-expanded {
+    width: auto !important;
+    height: 95vh !important;
+    object-fit: contain;
+    display: block;
+}
+
+.event-details-label {
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: -30px;
+    gap: 20px;
+}
+
+li {
+    font-size: 14px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.address {
+    display: flex;
+
+}
+
+.view-event-title {
+margin-bottom: -5px;
+}
+
+.event-details {
+    margin-top: -2px;
+}

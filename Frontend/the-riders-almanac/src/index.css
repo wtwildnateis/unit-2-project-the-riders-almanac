@@ -1,0 +1,389 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    top: 0;
+    left: 0;
+
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+
+.universalpagecontainer {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: whitesmoke;
+    justify-content: center;
+    align-items: stretch;
+    overflow-y: auto;
+    padding-bottom: 20px;
+    padding-top: 50px;
+
+
+}
+
+.eventspage h2 {
+    text-align: center;
+}
+
+.homepagecontainer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 90vh;
+    font-size: 20px;
+    padding-left: 250px;
+    padding-right: 250px;
+    padding-top: 100px;
+    padding-bottom: 90px;
+    position: relative;
+    margin-top: 300px;
+
+}
+
+.textstrong {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-style: oblique;
+}
+
+.homepagecontainer hr {
+    width: 98%;
+    margin-left: 0px;
+}
+
+.title-page {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    background-color: antiquewhite;
+    cursor: pointer;
+    padding-bottom: 30px;
+    overflow: hidden;
+}
+
+.titlebackgroundvideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+
+}
+
+.title-page img {
+    width: 500px;
+    height: auto;
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(6px 6px 7px rgba(0, 0, 0, .6));
+
+}
+
+.fade-in-logo {
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
+    animation-delay: 1s;
+}
+
+.pagelayout {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    background-color: black;
+}
+
+.navbarfade {
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
+}
+
+.pagefadein {
+    opacity: 0;
+    animation: fadeIn 2s ease-in forwards;
+}
+
+.fade-wrapper.fade-in {
+    opacity: 0;
+    animation: fadeIn 2s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+.rbc-month-view,
+.rbc-date-cell {
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+
+.rbc-toolbar,
+.custom-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 100px;
+    background-color: rgb(240, 240, 240);
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+
+.nav {
+    width: 110px;
+
+}
+
+.nav-left {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    padding-left: 20px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding-right: 20px;
+}
+
+.sort-label {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.sort-select {
+    padding: 0.5rem 1rem;
+    background-color: rgb(240, 240, 240);
+    color: black;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+.sort-select:hover {
+    background-color: rgb(225, 225, 225);
+}
+
+.nav-center {
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    pointer-events: none;
+}
+
+
+
+.calendarcontainer {
+    position: relative;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.mapcontainer {
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    overflow-x: auto;
+}
+
+
+
+.contact-form {
+    display: flex;
+    height: 100vh;
+    padding-top: 5px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+
+
+.footercontainer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    min-height: 50px;
+    background-color: black;
+    color: whitesmoke;
+    font-size: 7px;
+    letter-spacing: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.interactiveFtContainer {
+    width: 100%;
+    box-sizing: border-box;
+
+
+}
+
+.rbc-calendar {
+    width: 100%;
+}
+
+.universalPageH2 {
+    text-align: center;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: -10px;
+    font-weight: normal;
+
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    column-gap: 30px;
+    margin-bottom: 5px;
+}
+
+.rbc-event {
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black !important;
+}
+
+.newmapscontainer {
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 100px;
+
+}
+
+@media (max-width: 1024px) {
+
+    .universalpagecontainer {
+        justify-content: flex-start;
+        padding-top: 20px;
+    }
+
+    .newmapscontainer,
+    .mapcontainer,
+    .mapbuttonscontainer,
+    .themapcontainer {
+        width: 100vw;
+        height: auto;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .calendarcontainer {
+        width: 100vw;
+        height: auto;
+        padding-left: 0px;
+        padding-right: 10px;
+    }
+
+    .rbc-toolbar,
+    .custom-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        height: 120px;
+
+    }
+
+
+    .nav-left,
+    .nav-right {
+        justify-content: flex-start;
+
+    }
+
+    .nav-left {
+        margin-top: 5px;
+    }
+
+    .nav-center {
+        margin-top: 15px;
+    }
+
+    .rbc-calendar {
+        width: 100vw;
+        height: auto;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .nav-right {
+        margin-top: 5px;
+    }
+
+    .homepagecontainer {
+        padding-left: 60px;
+        padding-right: 60px;
+        margin-top: -50px;
+    }
+
+    @media (max-width: 767px) {
+        .title-page img {
+            width: 70%;
+            height: auto;
+        }
+
+        .homepagecontainer {
+            width: 760px;
+        }
+
+        .nav-left {
+            justify-content: center;
+        }
+
+        .nav-right {
+            justify-content: center;
+            margin-right: -20px;
+        }
+    }
+}

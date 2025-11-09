@@ -63,11 +63,6 @@ public class ForumController {
 
 // comments
 
-    @GetMapping("/posts/{postId}/comments")
-    public java.util.List<CommentResponse> comments(@PathVariable Long postId) {
-        return service.listComments(postId);
-    }
-
     @PostMapping("/comments")
     public CommentResponse addComment(
             @Valid @RequestBody CommentCreateRequest req,

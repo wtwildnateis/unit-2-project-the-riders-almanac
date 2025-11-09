@@ -10,7 +10,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.Instant;
@@ -124,7 +123,8 @@ public class ForumService {
     }
 
     public List<CommentResponse> listComments(Long postId) {
-        return comments.findForPost(postId).stream().map(this::toDto).toList();
+        var page = comments.findPageForPost(postId, PageRequest.of(0, 50)); // first 50, tweak as you like
+        return page.getContent().stream().map(this::toDto).toList();
     }
 
     @Transactional
