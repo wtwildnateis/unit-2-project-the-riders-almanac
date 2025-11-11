@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { login } from '../lib/authApi';
+import { login, me } from '../lib/authApi';
 import { useAuthStore } from '../stores/auth';
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const nav = useNavigate();
-  const { login: storeLogin } = useAuthStore();
+  const { setToken, setUser } = useAuthStore();
   const [form, setForm] = useState({ username: '', password: '' });
   const [err, setErr] = useState('');
 
@@ -13,14 +13,21 @@ export default function LoginPage() {
     e.preventDefault();
     setErr('');
     try {
-      const res = await login(form);
-      storeLogin(res.token, res.user);
+      const res = await login(form);   // likely { token }
+      setToken(res.token);             // 1) store token so /me works
+      const profile = await me();      // 2) get user { id, username, roles: [...] }
+      setUser(profile);                // 3) store user with normalized roles
+
+      if (import.meta.env.DEV) {
+        console.log('AUTH DEBUG (after login):', useAuthStore.getState().user);
+      }
+
       nav('/home');
     } catch (e) {
       setErr('Invalid credentials');
     }
   }
-
+  
   return (
     <div className="universalpagecontainer">
       <h1>Login</h1>

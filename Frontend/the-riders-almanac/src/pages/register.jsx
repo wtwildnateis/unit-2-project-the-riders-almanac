@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { register } from '../lib/authApi';
+import { register, me } from '../lib/authApi';
 import { useAuthStore } from '../stores/auth';
 import { useNavigate } from 'react-router-dom';
 
 export default function RegisterPage() {
   const nav = useNavigate();
-  const { login: storeLogin } = useAuthStore();
+  const { setToken, setUser } = useAuthStore();
   const [form, setForm] = useState({ username: '', email: '', password: '' });
   const [err, setErr] = useState('');
 
@@ -13,14 +13,16 @@ export default function RegisterPage() {
     e.preventDefault();
     setErr('');
     try {
-      const res = await register(form);
-      // if backend returns only {token}, you can call /api/account/me to fill user
-      storeLogin(res.token, res.user || null);
+      const res = await register(form); // { token, maybe user }
+      setToken(res.token);
+      const profile = await me();
+      setUser(profile);
+
       nav('/home');
     } catch (e) {
       setErr('Registration failed');
     }
-  }
+}
 
   return (
     <div className="universalpagecontainer">

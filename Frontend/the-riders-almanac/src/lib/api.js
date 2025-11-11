@@ -6,7 +6,8 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
+  // read from store OR localStorage so it still works after a reload
+  const token = useAuthStore.getState().token || localStorage.getItem('authToken');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });

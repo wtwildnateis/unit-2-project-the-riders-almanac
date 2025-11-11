@@ -3,8 +3,8 @@ import './EventModal.css';
 import Button from '../Button/Button';
 import StateForm from './StateDropdownForm';
 import { handleValidation, clearValidation } from '../FormValidationMessage/formValidation';
+import { uploadFlyer } from '../../lib/uploads';
 
-// allows users to add events to calendar, location info, flyer links etc
 const AddEventModal = ({ date, onClose, onSave, position, initialEvent, mode = "add" }) => {
     const [formData, setFormData] = useState({
         title: '',
@@ -32,95 +32,71 @@ const AddEventModal = ({ date, onClose, onSave, position, initialEvent, mode = "
                 state: initialEvent.state || '',
                 zip: initialEvent.zip || '',
                 description: initialEvent.description || '',
-
             });
         }
     }, [initialEvent, date]);
 
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState("");
+
     const modalRef = useRef();
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (modalRef.current && !modalRef.current.contains(e.target)) {
-                onClose();
-            }
-
+            if (modalRef.current && !modalRef.current.contains(e.target)) onClose();
         };
         document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-
-        };
-    }, []);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [onClose]);
 
     function formatDateTimeLocal(date) {
         if (!date) return '';
-
-        const d = (date instanceof Date) ? date : new Date(date);
+        const d = date instanceof Date ? date : new Date(date);
         if (isNaN(d.getTime())) return '';
-
         const pad = (n) => n.toString().padStart(2, '0');
         return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-
-
     }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        const parsedValue = (name === 'start' || name === 'end')
-            ? new Date(value)
-            : value;
-
-        setFormData(prev => ({
-            ...prev,
-            [name]: parsedValue
-
-        }));
-
+        const parsedValue = name === 'start' || name === 'end' ? new Date(value) : value;
+        setFormData((prev) => ({ ...prev, [name]: parsedValue }));
     };
 
     useEffect(() => {
         if (modalRef.current) {
-            modalRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-                inline: 'nearest'
-            });
+            modalRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
         }
     }, [position]);
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        const { street, city, state, zip, ...rest } = formData;
-
-        const location = `${street}, ${city}, ${state} ${zip}`.trim();
-
-        const eventData = {
-            ...rest,
-            location,
-            street,
-            city,
-            state,
-            zip,
+        // builds event payload for backend
+        const payload = {
+            title: formData.title,
+            type: formData.type,
+            flyer: formData.flyer || null,
+            start: formData.start,
+            end: formData.end,
+            street: formData.street,
+            city: formData.city,
+            state: formData.state,
+            zip: formData.zip,
+            description: formData.description || '',
         };
-
-        onSave(eventData);
+        onSave(payload);
     };
 
     return (
         <div className="modalcontainer">
-
-            <div className="modalstyle"
+            <div
+                className="modalstyle"
                 ref={modalRef}
                 style={{
                     position: "absolute",
                     top: `${position.top || 0}px`,
                     left: `${position.left || 0}px`,
-                    marginBottom: '50px', 
+                    marginBottom: '50px',
                     zIndex: 1000
-                    
                 }}
             >
                 <h3>{mode === "edit" ? "Edit Event Details" : "Add New Biking Event"}</h3>
@@ -139,17 +115,12 @@ const AddEventModal = ({ date, onClose, onSave, position, initialEvent, mode = "
                                 clearValidation(e);
                             }}
                             onInvalid={(e) => handleValidation(e, "Please enter the event name.")}
-
                         />
                     </label>
 
                     <label>
                         Type of Event:
-                        <select
-                            name="type"
-                            value={formData.type}
-                            onChange={handleChange}
-                            required>
+                        <select name="type" value={formData.type} onChange={handleChange} required>
                             <option value="">Select Type</option>
                             <option value="Bike Race">Bike Race</option>
                             <option value="BMX Jam">BMX Jam</option>
@@ -195,7 +166,6 @@ const AddEventModal = ({ date, onClose, onSave, position, initialEvent, mode = "
                                     clearValidation(e);
                                 }}
                                 onInvalid={(e) => handleValidation(e, "Please enter a valid street address.")}
-
                             />
                         </label>
 
@@ -212,7 +182,6 @@ const AddEventModal = ({ date, onClose, onSave, position, initialEvent, mode = "
                                     clearValidation(e);
                                 }}
                                 onInvalid={(e) => handleValidation(e, "Please enter a valid city name.")}
-
                             />
                         </label>
 
@@ -225,7 +194,7 @@ const AddEventModal = ({ date, onClose, onSave, position, initialEvent, mode = "
                             Zip Code:
                             <input
                                 type="text"
-                                name="zipcode"
+                                name="zip"
                                 placeholder="12345"
                                 value={formData.zip}
                                 required
@@ -234,11 +203,10 @@ const AddEventModal = ({ date, onClose, onSave, position, initialEvent, mode = "
                                     clearValidation(e);
                                 }}
                                 onInvalid={(e) => handleValidation(e, "Please enter a valid zip code.")}
-
                             />
-
                         </label>
                     </div>
+
                     <label>
                         Additional Info:
                         <textarea
@@ -249,17 +217,43 @@ const AddEventModal = ({ date, onClose, onSave, position, initialEvent, mode = "
                         />
                     </label>
 
+                    {/*image upload to cloudinary*/}
                     <label>
-                        Upload Flyer URL (Optional):
+                        Upload Flyer (Optional):
                         <input
-                            type="text"
-                            name="flyer"
-                            placeholder="Paste direct link to image"
-                            value={formData.flyer}
-                            onChange={handleChange}
+                            type="file"
+                            accept="image/*"
+                            onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+
+                                setUploadError("");
+                                setUploading(true);
+                                try {
+                                    const url = await uploadFlyer(file);
+                                    setFormData(prev => ({ ...prev, flyer: url }));
+                                } catch (err) {
+                                    setUploadError(err.message || "Upload failed");
+                                } finally {
+                                    setUploading(false);
+                                }
+                            }}
                         />
                     </label>
 
+                    {uploading && <div className="hint">Uploading…</div>}
+                    {uploadError && <div className="error">{uploadError}</div>}
+
+                    {/* quick preview */}
+                    {formData.flyer && (
+                        <div style={{ marginTop: 8 }}>
+                            <img
+                                src={formData.flyer}
+                                alt="Flyer preview"
+                                style={{ maxWidth: "100%", maxHeight: 180, objectFit: "contain" }}
+                            />
+                        </div>
+                    )}
 
                     <div className="modal-button">
                         <Button type="submit">{mode === "edit" ? "Save Changes" : "Add Event"}</Button>

@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import './EventModal.css';
 import Button from '../Button/Button';
 
-const ViewEventModal = ({ event, onClose, onDelete, onEditRequest, position }) => {
+const ViewEventModal = ({ event, onClose, onDelete, onEditRequest, position, canEdit = false, canDelete = false }) => {
+    if (!event) return null;
+    const { top = 0, left = 0 } = position || { top: 0, left: 0 };
     const modalRef = useRef();
     const [showFullFlyer, setShowFullFlyer] = useState(false);
 
@@ -15,6 +17,10 @@ const ViewEventModal = ({ event, onClose, onDelete, onEditRequest, position }) =
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const startText = event.start ? new Date(event.start).toLocaleString() : '';
+    const endText = event.end ? new Date(event.end).toLocaleString() : '';
+    const hasDescription = typeof event.description === 'string' && event.description.trim().length > 0;
 
     return (
         <>
@@ -57,13 +63,13 @@ const ViewEventModal = ({ event, onClose, onDelete, onEditRequest, position }) =
                         <div className="event-details-label">End Time:</div> <li>{new Date(event.end).toLocaleString()}</li>
                         <div className="event-details-label">Address:</div> <li><div className="address">{event.location}</div></li>
                         {event.description?.trim() && (
-                        <><div className="event-details-label">Description:</div><li>{event.description}</li></>
+                            <><div className="event-details-label">Description:</div><li>{event.description}</li></>
                         )}
-                </ul>
+                    </ul>
 
                     <div className="modal-button">
-                        <Button onClick={() => onEditRequest(event)}>Edit</Button>
-                        <Button onClick={() => onDelete(event.id)}>Delete</Button>
+                        {canEdit && <Button onClick={() => onEditRequest(event)}>Edit</Button>}
+                        {canDelete && <Button onClick={() => onDelete(event.id)}>Delete</Button>}
                         <Button onClick={onClose}>Close</Button>
                     </div>
                 </div>
