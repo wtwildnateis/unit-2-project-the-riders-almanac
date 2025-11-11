@@ -7,11 +7,8 @@ import Contact from '../../pages/contact';
 import Footer from "../Footer/Footer";
 import LoginPage from '../../pages/login';
 import RegisterPage from '../../pages/register';
-//import ProtectedRoute from './ProtectedRoute';
-//import ForumList from '../../pages/forum-list';
-//import ForumPost from '../../pages/forum-post';
-//import AdminUsers from '../../pages/admin-users';
-//import ModTools from '../../pages/mod-tools';
+import ForumList from '../../pages/forum-list';
+import ForumPost from '../../pages/forum-post';
 import { useEffect } from 'react';
 
 const MainRoutes = () => {
@@ -56,7 +53,10 @@ const MainRoutes = () => {
                         <Route path="/contact-us" element={<Contact />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />
-                        
+                        <Route path="/forum" element={<ForumList />} />
+                        <Route path="/forum/:id" element={<ForumPost />} />
+
+
                     </Routes>
                 </section>
             </main>

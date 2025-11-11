@@ -1,4 +1,3 @@
-// Try to derive the "owner" of an event from multiple possible fields
 function eventOwnerMatchesUser(event, user) {
   if (!event || !user) return false;
 

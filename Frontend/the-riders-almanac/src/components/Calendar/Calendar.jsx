@@ -216,7 +216,7 @@ const EventCalendar = () => {
         }
     };
 
-    // Save edit (PUT → refetch)
+    // Save edit (Put / refetch)
     const handleEditEvent = async (updatedEvent) => {
         try {
             await updateEvent(updatedEvent.id, {
