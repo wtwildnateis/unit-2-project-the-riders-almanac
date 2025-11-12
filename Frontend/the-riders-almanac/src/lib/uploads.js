@@ -11,3 +11,5 @@ export async function uploadFlyer(file) {
   const json = await res.json(); // expects { url: "https://..." }
   return json.url;
 }
+
+export const uploadImage = uploadFlyer;

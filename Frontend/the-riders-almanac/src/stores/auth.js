@@ -6,7 +6,7 @@ function normalizeRoles(input) {
   return arr
     .filter(Boolean)
     .map(r => String(r).trim())
-    .map(r => r.startsWith('ROLE_') ? r.slice(5) : r) // strip ROLE_ for to make it cleaner
+    .map(r => r.startsWith('ROLE_') ? r.slice(5) : r) 
     .map(r => r.toUpperCase());
 }
 
@@ -54,4 +54,14 @@ export const useAuthStore = create((set, get) => ({
     const wants = roles.map(r => String(r).toUpperCase().replace(/^ROLE_/, ''));
     return u.roles.some(r => wants.includes(r));
   },
+  
 }));
+
+export function useAuthStoreRoles() {
+  const state = useAuthStore();
+  const hasAnyRole = (...roles) => {
+    const list = state.user?.roles || [];
+    return roles.some(r => list.includes(r));
+  };
+  return { hasAnyRole };
+}

@@ -1,13 +1,16 @@
 import api from './api';
 
-export async function feed({ page=0, size=20 }={}) {
-  const { data } = await api.get('/api/forum/posts', { params:{ page, size }});
-  return data; // PageResponse<PostResponse>
+// posts
+export async function feed({ page = 0, size = 20, tags = [], match = 'OR' } = {}) {
+  const params = { page, size, match };
+  if (Array.isArray(tags) && tags.length) params.tags = tags; // array of slugs
+  const { data } = await api.get('/api/forum/posts', { params });
+  return data;
 }
 
 export async function getPost(id) {
   const { data } = await api.get(`/api/forum/posts/${id}`);
-  return data;
+  return data; // postResponse
 }
 
 export async function createPost(body) {
@@ -24,6 +27,12 @@ export async function deletePost(id) {
   await api.delete(`/api/forum/posts/${id}`);
 }
 
+export async function togglePostLock(id, locked) {
+  const { data } = await api.put(`/api/forum/posts/${id}`, { locked });
+  return data; // PostResponse
+}
+
+// comments
 export async function listComments(postId, {page=0,size=20}={}) {
   const { data } = await api.get(`/api/forum/posts/${postId}/comments`, { params:{ page, size }});
   return data; // PageResponse<CommentResponse>
@@ -41,4 +50,23 @@ export async function updateComment(id, body) {
 
 export async function deleteComment(id) {
   await api.delete(`/api/forum/comments/${id}`);
+}
+
+// tags
+export async function listTags() {
+  const { data } = await api.get('/api/forum/tags');
+  return (data || []).map(t => ({
+    id: t.id,
+    slug: t.slug,
+    label: t.label,
+  }));
+}
+
+export async function createTag(body) {
+  const { data } = await api.post('/api/forum/tags', body);
+  return data;
+}
+
+export async function deleteTag(id) {
+  await api.delete(`/api/forum/tags/${id}`);
 }
