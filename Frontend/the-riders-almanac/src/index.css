@@ -387,3 +387,65 @@ html {
         }
     }
 }
+
+/* Lightbox root */
+.ImageLightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+/* Backdrop stays behind everything else */
+.ImageLightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 2;
+}
+
+/* Content layer sits above backdrop and centers the image */
+.ImageLightbox__content {
+  position: relative;          /* establishes a containing block for the close btn */
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+}
+
+/* The image—reset + desired behavior */
+.ImageLightbox__img {
+  all: unset;
+  display: block;
+  max-width: 100vw;
+  max-height: 80vh;
+  object-fit: contain;
+  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+  border-radius: 8px;
+  cursor: zoom-out;
+  z-index: 9999;
+}
+
+/* Close “X” button */
+.ImageLightbox__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;                  /* above image/content */
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  font-size: 22px;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+}
+
+.ImageLightbox__close:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}

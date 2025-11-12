@@ -42,9 +42,9 @@ export default function PostComposer({ onCreated }) {
         if (!title.trim() || !body.trim()) return;
         setBusy(true); setErr('');
         try {
-            const post = await createPost({ title, body, tags: tags.map(t => t.slug ?? t), imageUrls: images });
+            const created = await createPost({ title, body, tags: tags.map(t => t.slug ?? t), imageUrls: images });
             setTitle(''); setBody(''); setTags([]); setImages([]);
-            onCreated?.(post);
+            onCreated?.(created);
         } catch (e) {
             setErr(extractApiMessage(e));
         } finally { setBusy(false); }

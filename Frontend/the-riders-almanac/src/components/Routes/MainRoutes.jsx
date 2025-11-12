@@ -8,8 +8,8 @@ import Footer from "../Footer/Footer";
 import LoginPage from '../../pages/login';
 import RegisterPage from '../../pages/register';
 import ForumList from '../../pages/forum-list';
-import ForumPost from '../../pages/forum-post';
 import { useEffect } from 'react';
+import ForumDetail from "../../pages/forum-detail";
 
 const MainRoutes = () => {
     const location = useLocation();
@@ -54,7 +54,7 @@ const MainRoutes = () => {
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/forum" element={<ForumList />} />
-                        <Route path="/forum/:id" element={<ForumPost />} />
+                        <Route path="/forum/:id" element={<ForumDetail />} />
 
 
                     </Routes>
