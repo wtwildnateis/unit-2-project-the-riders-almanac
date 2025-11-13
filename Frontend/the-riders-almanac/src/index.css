@@ -449,3 +449,15 @@ html {
   outline: 2px solid white;
   outline-offset: 2px;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  color-scheme: dark;
+}
+
+body{
+  @apply bg-ra-bg text-paper antialiased;
+}
