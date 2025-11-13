@@ -239,3 +239,11 @@
   opacity: .6;
   cursor: not-allowed;
 }
+
+.map-page {
+  padding-top: 24px;               /* tweak this if you want it tighter/looser */
+}
+
+.map-page .page-title {
+  margin-top: 0;
+}

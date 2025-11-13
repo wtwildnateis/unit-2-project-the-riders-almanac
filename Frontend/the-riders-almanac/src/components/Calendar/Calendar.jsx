@@ -16,8 +16,6 @@ import { useAuthStore } from "../../stores/auth";
 import { canEditEvent, canDeleteEvent } from "./CalendarAuth";
 import { listEvents, createEvent, updateEvent, deleteEvent } from "../../lib/eventsApi";
 
-// NOTE: page/layout CSS is loaded by the page (events.jsx)
-
 const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 
@@ -81,7 +79,6 @@ function EventCalendar() {
   const filteredEvents =
     eventTypeFilter === "All" ? events : events.filter((e) => e.type === eventTypeFilter);
 
-  // add only on future days
   const handleDateClick = ({ start }) => {
     const day = new Date(start);
     const today = new Date();
@@ -144,31 +141,32 @@ function EventCalendar() {
   };
 
   useEffect(() => {
-  function handleOpen(e) {
-    const raw = e.detail;
-    if (!raw) return;
+    function handleOpen(e) {
+      const raw = e.detail;
+      if (!raw) return;
 
-    // Prefer the instance from our state (has Date objects & same refs)
-    const found = events.find((x) => x.id === raw.id);
-    if (found) {
-      setSelectedEvent(found);
-      return;
+      const found = events.find((x) => x.id === raw.id);
+      if (found) {
+        setSelectedEvent(found);
+        return;
+      }
+
+      setSelectedEvent({
+        ...raw,
+        start: new Date(raw.start),
+        end: new Date(raw.end),
+      });
     }
 
-    // Fallback: coerce dates if it wasn't in this month fetch yet
-    setSelectedEvent({
-      ...raw,
-      start: new Date(raw.start),
-      end: new Date(raw.end),
-    });
-  }
-
-  window.addEventListener("ra:openEvent", handleOpen);
-  return () => window.removeEventListener("ra:openEvent", handleOpen);
-}, [events]);
+    window.addEventListener("ra:openEvent", handleOpen);
+    return () => window.removeEventListener("ra:openEvent", handleOpen);
+  }, [events]);
 
   return (
-    <div style={{ position: "relative", height: "100%" }}>
+    <div
+      className="ra-calendar-card cal-shell relative"
+      style={{ height: "var(--mapHeight)", overflow: "visible" }}  // allow drawer to overflow
+    >
       <Calendar
         localizer={localizer}
         events={filteredEvents}
@@ -176,7 +174,7 @@ function EventCalendar() {
         endAccessor="end"
         date={currentDate}
         onNavigate={(newDate) => setCurrentDate(newDate)}
-        style={{ height: "100%", width: "100%" }}   // fills .cal-shell from the page
+        style={{ height: "100%", width: "100%" }}
         selectable
         onSelectSlot={handleDateClick}
         onSelectEvent={handleSelectedEvent}

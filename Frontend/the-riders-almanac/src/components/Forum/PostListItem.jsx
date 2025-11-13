@@ -1,69 +1,93 @@
-import { Link } from 'react-router-dom';
-
-// tiny helper until you add real avatars
-function Avatar({ name }) {
-  const letter = (name || '?').slice(0,1).toUpperCase();
-  return (
-    <div style={{
-      width:36, height:36, borderRadius:'50%',
-      background:'#1f2937', color:'#9ca3af',
-      display:'grid', placeItems:'center', fontWeight:700
-    }}>
-      {letter}
-    </div>
-  );
-}
+import { Link } from "react-router-dom";
 
 function timeAgo(iso) {
-  const s = (Date.now() - new Date(iso).getTime())/1000;
-  if (s < 60) return `${Math.floor(s)}s ago`;
-  const m = s/60; if (m < 60) return `${Math.floor(m)}m ago`;
-  const h = m/60; if (h < 24) return `${Math.floor(h)}h ago`;
-  const d = h/24; return `${Math.floor(d)}d ago`;
+  if (!iso) return "";
+  const d = new Date(iso);
+  const s = Math.max(1, Math.floor((Date.now() - d.getTime()) / 1000));
+  const mins = Math.floor(s / 60), hrs = Math.floor(s / 3600), days = Math.floor(s / 86400);
+  if (days >= 1) return `${days}d ago`;
+  if (hrs >= 1) return `${hrs}h ago`;
+  if (mins >= 1) return `${mins}m ago`;
+  return `${s}s ago`;
 }
 
 export default function PostListItem({ post }) {
-  // post: {id,title,authorUsername,createdAt,tags,images}
+  if (!post || !post.id) return null;
+
+  const author =
+    post.authorName ||
+    post.author?.username ||
+    post.author?.name ||
+    "admin";
+
+  const when = post.relativeTime || post.age || timeAgo(post.createdAt);
+
   return (
-    <li
-      style={{
-        listStyle:'none',
-        background:'#0b0f14', border:'1px solid #111827',
-        borderRadius:12, padding:14, display:'grid', gap:8
-      }}
-    >
-      <div style={{ display:'flex', gap:12, alignItems:'center' }}>
-        <Avatar name={post.authorUsername} />
-        <div style={{ minWidth:0 }}>
-          <Link to={`/forum/${post.id}`} state={{ from: '/forum' }}
-            style={{ fontWeight:700, color:'#e5e7eb', textDecoration:'none' }}
+    <li className="post-item">
+      <Link
+        to={`/community/${post.id}`}
+        className="clickable"
+        title={post.title}
+        style={{ display: "block", textDecoration: "none", color: "inherit" }}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "56px 1fr",
+            gap: 14,
+            padding: "18px 18px 14px 26px",
+          }}
+        >
+          <div
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 9999,
+              background: "#1a2120",
+              display: "grid",
+              placeItems: "center",
+              border: "1px solid var(--ring)",
+              flex: "0 0 56px",
+            }}
+            aria-hidden
           >
-            {post.title}
-          </Link>
-          <div style={{ fontSize:12, color:'#94a3b8', marginTop:2 }}>
-            {post.authorUsername} · {timeAgo(post.createdAt)}
+            <span style={{ color: "var(--ink)", fontWeight: 800 }}>
+              {(author || "A").charAt(0).toUpperCase()}
+            </span>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+            <div className="post-title" style={{ fontSize: 22, marginBottom: 8 }}>
+              {post.title}
+            </div>
+
+            {/* tags left + meta right, single row */}
+            <div className="post-row">
+              <div className="post-tags">
+                {(post.tags ?? []).map((t) => {
+                  const label = t.label || t.name || t.slug || "";
+                  const key = t.slug || label || String(Math.random());
+                  return (
+                    <span key={key} className="post-chip">
+                      #{label}
+                    </span>
+                  );
+                })}
+              </div>
+
+              <div className="post-meta">
+                <span>{author}</span>
+                {when && (
+                  <>
+                    <span>·</span>
+                    <time dateTime={post.createdAt || ""}>{when}</time>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-        {/* right-side minimal counter or thumbnail could go here later */}
-      </div>
-
-      {Array.isArray(post.tags) && post.tags.length > 0 && (
-        <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginLeft:48 }}>
-          {post.tags.map(t => (
-            <span
-              key={t.slug ?? t.id}
-              style={{
-                fontSize:12, color:'#9ae6b4',
-                background:'rgba(16,185,129,.08)',
-                border:'1px solid rgba(16,185,129,.2)',
-                padding:'2px 8px', borderRadius:999
-              }}
-            >
-              #{t.label}
-            </span>
-          ))}
-        </div>
-      )}
+      </Link>
     </li>
   );
 }

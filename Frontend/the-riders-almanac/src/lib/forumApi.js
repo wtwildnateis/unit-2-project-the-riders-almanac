@@ -70,3 +70,14 @@ export async function createTag(body) {
 export async function deleteTag(id) {
   await api.delete(`/api/forum/tags/${id}`);
 }
+
+export async function togglePostHidden(id, hidden) {
+  const { data } = await api.put(`/api/forum/posts/${id}`, { hidden });
+  return data; // PostResponse
+}
+
+// --- trending ---
+export async function trending({ window = "7d", limit = 5 } = {}) {
+  const { data } = await api.get('/api/forum/posts/trending', { params: { window, limit } });
+  return data; // Page/List of PostResponse (light)
+}

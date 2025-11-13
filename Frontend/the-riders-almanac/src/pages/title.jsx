@@ -24,7 +24,7 @@ function Title() {
             loop
             playsInline
             >
-                <source src="https://res.cloudinary.com/dqg9xe92b/video/upload/v1753387288/titlebackground_qzl92j.mp4" type="video/mp4" alt="Cycling"
+                <source src="https://res.cloudinary.com/dqg9xe92b/video/upload/v1763042702/202511130803_dja9y0.mp4" type="video/mp4" alt="Cycling"
                 />
                 Sorry it looks like your browser doesn't like videos very much..
             </video>

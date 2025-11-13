@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { feed } from '../lib/forumApi';
 import { useAuthStore } from '../stores/auth';
 import { useAuthStoreRoles } from '../stores/auth';
@@ -30,7 +30,7 @@ export default function ForumList() {
   function handleCreated(post) {
     setOpenNew(false);
     // navigate directly to the new post
-    if (post?.id) navigate(`/forum/${post.id}`);
+    if (post?.id) navigate(`/community/${post.id}`);
     else load(0); // fallback
   }
 

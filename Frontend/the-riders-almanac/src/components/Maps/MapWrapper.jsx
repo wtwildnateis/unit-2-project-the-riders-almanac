@@ -21,7 +21,7 @@ const MapWrapper = () => {
   const categories = ["All", ...Object.keys(filterConfig)];
 
   return (
-    <div className="resources-page">
+  <div className="resources-page map-page">
       <h1 className="page-title">Map</h1>
 
       <div className="resources-layout">
