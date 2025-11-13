@@ -1,4 +1,3 @@
 package com.ridersalmanac.riders_almanac.forum.dto;
 
-public class TagUpdateRequest {
-}
+public record TagUpdateRequest(String label, Boolean enabled) {}

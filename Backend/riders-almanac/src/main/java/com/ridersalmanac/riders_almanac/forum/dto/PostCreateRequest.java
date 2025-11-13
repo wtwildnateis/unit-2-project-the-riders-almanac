@@ -7,6 +7,6 @@ import java.util.List;
 public record PostCreateRequest(
         @NotBlank @Size(max=140) String title,
         @NotBlank String body,
-        @Size(max=200) String tags,
+        java.util.List<@jakarta.validation.constraints.Pattern(regexp = "^[a-z0-9-]+$") String> tags, // slugs
         List<@NotBlank String> imageUrls
 ) {}

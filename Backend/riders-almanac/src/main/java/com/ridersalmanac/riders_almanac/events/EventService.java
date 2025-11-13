@@ -1,18 +1,19 @@
 package com.ridersalmanac.riders_almanac.events;
 
-import com.ridersalmanac.riders_almanac.events.dto.CreateEventRequest;
-import com.ridersalmanac.riders_almanac.events.dto.EventMapper;
-import com.ridersalmanac.riders_almanac.events.dto.EventResponse;
-import com.ridersalmanac.riders_almanac.events.dto.UpdateEventRequest;
+import com.ridersalmanac.riders_almanac.events.dto.*;
 import com.ridersalmanac.riders_almanac.users.Role;
 import com.ridersalmanac.riders_almanac.users.User;
 import com.ridersalmanac.riders_almanac.users.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -107,5 +108,30 @@ public class EventService {
             if ("ROLE_ADMIN".equals(name) || "ROLE_MOD".equals(name)) return true;
         }
         return false;
+    }
+
+    public List<UpcomingEventsDto> upcoming(int limit) {
+        var page = PageRequest.of(0, Math.max(1, Math.min(limit, 12))); // cap at 12
+        Instant now = Instant.now();
+
+        return events.findUpcoming(now, page)
+                .stream()
+                .map(e -> new UpcomingEventsDto(
+                        e.getId(),
+                        e.getTitle(),
+                        e.getStart(),
+                        e.getEnd(),
+                        e.getType(),
+                        buildLocation(e),
+                        e.getFlyer()
+                ))
+                .toList();
+    }
+
+    private String buildLocation(Event e) {
+        // adapt to your model (street/city/state/zip or a single location field)
+        return Stream.of(e.getStreet(), e.getCity(), e.getState(), e.getZip())
+                .filter(Objects::nonNull).map(String::trim)
+                .filter(s -> !s.isEmpty()).collect(Collectors.joining(", "));
     }
 }

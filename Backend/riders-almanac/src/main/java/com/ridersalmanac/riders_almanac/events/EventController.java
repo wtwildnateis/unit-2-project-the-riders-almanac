@@ -2,6 +2,7 @@ package com.ridersalmanac.riders_almanac.events;
 
 import com.ridersalmanac.riders_almanac.events.dto.CreateEventRequest;
 import com.ridersalmanac.riders_almanac.events.dto.EventResponse;
+import com.ridersalmanac.riders_almanac.events.dto.UpcomingEventsDto;
 import com.ridersalmanac.riders_almanac.events.dto.UpdateEventRequest;
 import com.ridersalmanac.riders_almanac.users.UserRepository;
 import jakarta.validation.Valid;
@@ -65,5 +66,10 @@ public class EventController {
             @AuthenticationPrincipal UserDetails principal) {
         Long currentUserId = users.findByUsername(principal.getUsername()).orElseThrow().getId();
         service.delete(id, currentUserId);
+    }
+
+    @GetMapping("/upcoming")
+    public List<UpcomingEventsDto> upcoming(@RequestParam(defaultValue = "5") int limit) {
+        return service.upcoming(limit);
     }
 }

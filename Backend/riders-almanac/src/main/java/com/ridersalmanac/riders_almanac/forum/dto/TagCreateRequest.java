@@ -1,4 +1,3 @@
 package com.ridersalmanac.riders_almanac.forum.dto;
 
-public class TagCreateRequest {
-}
+public record TagCreateRequest(String label, String slug) {}

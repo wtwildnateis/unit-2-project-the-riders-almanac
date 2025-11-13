@@ -1,4 +1,6 @@
 package com.ridersalmanac.riders_almanac.forum;
 
-public class PostWithScore {
+public interface PostWithScore {
+    Post getPost();
+    Double getScore();
 }

@@ -3,12 +3,15 @@ package com.ridersalmanac.riders_almanac.forum;
 import com.ridersalmanac.riders_almanac.users.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "forum_posts", indexes = {
@@ -30,8 +33,19 @@ public class Post {
     @Lob @Column(nullable=false)
     private String body;
 
-    @Column(length=200)
-    private String tags;
+    @ManyToMany
+    @JoinTable(
+            name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"),
+            uniqueConstraints = @UniqueConstraint(
+                    name = "uk_post_tags_post_tag",
+                    columnNames = {"post_id","tag_id"}
+            )
+    )
+    @BatchSize(size = 50)
+    @Builder.Default
+    private Set<Tag> tagEntities = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable=false, length=16)
