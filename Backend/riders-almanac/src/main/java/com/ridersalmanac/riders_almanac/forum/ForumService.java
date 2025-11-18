@@ -11,11 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import com.ridersalmanac.riders_almanac.forum.dto.TagDto;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -355,4 +355,16 @@ public class ForumService {
         var page = posts.findTrending(since, pageable);
         return PageResponse.of(page, PostResponse::from); // see factory below
     }
+
+    public List<TagDto> topTags(int limit) {
+        // clamp limit between 1 and 20
+        int size = Math.max(1, Math.min(limit, 20));
+        var pageable = PageRequest.of(0, size);
+
+        // NOTE: 'posts' is the ForumRepository field you already use for trending()
+        return posts.findTopTags(pageable).stream()
+                .map(t -> new TagDto(t.getId(), t.getSlug(), t.getLabel()))
+                .toList();
+    }
+
 }

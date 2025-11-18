@@ -4,6 +4,8 @@ import com.ridersalmanac.riders_almanac.forum.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
+
 
 import java.text.Normalizer;
 import java.util.List;
@@ -11,9 +13,20 @@ import java.util.List;
 @Service @RequiredArgsConstructor
 public class TagService {
     private final TagRepository repo;
+    private final ForumRepository forumRepo;
 
-    public List<Tag> listEnabled() { return repo.findByEnabledTrueOrderByLabelAsc(); }
-    public List<Tag> search(String q) { return repo.search(q == null ? "" : q.trim()); }
+
+    public List<Tag> listEnabled() {
+        return repo.findByEnabledTrueOrderByLabelAsc();
+    }
+
+    public List<Tag> search(String q) {
+        return repo.search(q == null ? "" : q.trim());
+    }
+
+    public List<Tag> listDisabled() {
+        return repo.findByEnabledFalseOrderByLabelAsc();
+    }
 
     @Transactional
     public TagDto create(TagCreateRequest req) {
@@ -46,5 +59,14 @@ public class TagService {
                 .replaceAll("[^a-z0-9]+", "-")
                 .replaceAll("(^-|-$)", "");
         return base.isBlank() ? "tag" : base;
+    }
+
+
+    public List<TagDto> topTags(int limit) {
+        int size = Math.max(1, Math.min(limit, 20)); // clamp 1-20
+        var page = PageRequest.of(0, size);
+        return forumRepo.findTopTags(page).stream()
+                .map(t -> new TagDto(t.getId(), t.getSlug(), t.getLabel()))
+                .toList();
     }
 }

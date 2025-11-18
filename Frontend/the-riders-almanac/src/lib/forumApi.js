@@ -62,13 +62,36 @@ export async function listTags() {
   }));
 }
 
+export async function listDisabledTags() {
+  const { data } = await api.get('/api/forum/tags/disabled');
+  return (data || []).map(t => ({
+    id: t.id,
+    slug: t.slug,
+    label: t.label,
+  }));
+}
+
+export async function listTopTags(limit = 5) {
+  const { data } = await api.get('/api/forum/tags/top', { params: { limit } });
+  return (data || []).map(t => ({
+    id: t.id,
+    slug: t.slug,
+    label: t.label,
+  }));
+}
+
 export async function createTag(body) {
   const { data } = await api.post('/api/forum/tags', body);
   return data;
 }
 
+// "Delete" == disable
 export async function deleteTag(id) {
-  await api.delete(`/api/forum/tags/${id}`);
+  await api.patch(`/api/forum/tags/${id}`, { enabled: false });
+}
+
+export async function enableTag(id) {
+  await api.patch(`/api/forum/tags/${id}`, { enabled: true });
 }
 
 export async function togglePostHidden(id, hidden) {

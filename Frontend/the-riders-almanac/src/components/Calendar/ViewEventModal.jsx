@@ -165,10 +165,6 @@ const ViewEventModal = ({
                   Delete
                 </button>
               )}
-
-              <button type="button" className="custom-button" onClick={onClose}>
-                Close
-              </button>
             </div>
           </div>
         </div>

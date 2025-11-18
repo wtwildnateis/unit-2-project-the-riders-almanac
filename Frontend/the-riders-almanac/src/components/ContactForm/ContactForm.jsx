@@ -120,7 +120,7 @@ export default function ContactPage() {
                       className="h-11 rounded-xl border border-[rgba(166,217,138,.18)] bg-[#171c17] px-3 text-[#e8ebea] outline-none focus:border-[#a6d98a] focus:ring-2 focus:ring-[rgba(166,217,138,.18)]"
                       type="text"
                       name="subject"
-                      placeholder="Slide into Our DM's!"
+                      placeholder="Slide into our DM's!"
                       value={formData.subject}
                       onChange={onChange}
                     />

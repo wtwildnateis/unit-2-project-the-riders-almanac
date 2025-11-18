@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
@@ -15,12 +16,14 @@ import CustomToolbar from "./CustomToolbar";
 import { useAuthStore } from "../../stores/auth";
 import { canEditEvent, canDeleteEvent } from "./CalendarAuth";
 import { listEvents, createEvent, updateEvent, deleteEvent } from "../../lib/eventsApi";
+import Button from "../Button/Button";
 
 const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 
 function EventCalendar() {
   const { user, hasAnyRole } = useAuthStore();
+  const nav = useNavigate();
 
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -34,6 +37,16 @@ function EventCalendar() {
   const [refreshKey, setRefreshKey] = useState(0);
   const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
+  // 🔔 login prompt toast (appears only after clicking a slot while logged out)
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  // auto-hide login prompt after a few seconds
+  useEffect(() => {
+    if (!showLoginPrompt) return;
+    const t = setTimeout(() => setShowLoginPrompt(false), 3500);
+    return () => clearTimeout(t);
+  }, [showLoginPrompt]);
+
   // range for current month
   const { from, toDate } = useMemo(
     () => ({ from: startOfMonth(currentDate), toDate: endOfMonth(currentDate) }),
@@ -43,9 +56,9 @@ function EventCalendar() {
   const getNextDate = (action, current) => {
     switch (action) {
       case "TODAY": return startOfToday();
-      case "PREV":  return subMonths(current, 1);
-      case "NEXT":  return addMonths(current, 1);
-      default:      return current;
+      case "PREV": return subMonths(current, 1);
+      case "NEXT": return addMonths(current, 1);
+      default: return current;
     }
   };
 
@@ -80,9 +93,16 @@ function EventCalendar() {
     eventTypeFilter === "All" ? events : events.filter((e) => e.type === eventTypeFilter);
 
   const handleDateClick = ({ start }) => {
+    // if not logged in, show a toast instead of opening the modal
+    if (!user) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
     const day = new Date(start);
     const today = new Date();
-    day.setHours(0,0,0,0); today.setHours(0,0,0,0);
+    day.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
     if (day < today) return alert("You can't add events to past dates.");
     setSelectedDate(start);
     setShowModal(true);
@@ -175,12 +195,12 @@ function EventCalendar() {
         date={currentDate}
         onNavigate={(newDate) => setCurrentDate(newDate)}
         style={{ height: "100%", width: "100%" }}
-        selectable
+        selectable          // always selectable so we can intercept clicks
         onSelectSlot={handleDateClick}
         onSelectEvent={handleSelectedEvent}
         dayPropGetter={(d) => {
-          const now = new Date(); now.setHours(0,0,0,0);
-          const cell = new Date(d); cell.setHours(0,0,0,0);
+          const now = new Date(); now.setHours(0, 0, 0, 0);
+          const cell = new Date(d); cell.setHours(0, 0, 0, 0);
           return cell < now ? { className: "rbc-day-disabled" } : {};
         }}
         components={{
@@ -201,7 +221,35 @@ function EventCalendar() {
         </div>
       )}
 
-      {(showModal || editingEvent) && (
+      {/* 🔔 Login prompt toast – only appears after a blocked click */}
+      {showLoginPrompt && !user && (
+        <div
+          className="absolute left-3 bottom-3 rounded bg-black/80 px-3 py-2 text-xs md:text-sm text-white flex flex-col md:flex-row md:items-center gap-2 shadow-lg"
+          style={{ zIndex: 40, pointerEvents: "auto" }}              // 👈 make sure it's on top + clickable
+          onMouseDown={(e) => e.stopPropagation()}                  // 👈 don't let calendar steal the event
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex-1">
+            Login to create your own events.
+          </div>
+          <div className="flex items-center gap-2">
+            <Button type="button" onClick={() => nav("/login")}>
+              Go to Login
+            </Button>
+            <button
+              type="button"
+              aria-label="Dismiss"
+              onClick={() => setShowLoginPrompt(false)}
+              className="text-white/70 hover:text-white text-sm"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Only render add/edit modal if logged in */}
+      {user && (showModal || editingEvent) && (
         <AddEventModal
           date={editingEvent?.start || selectedDate}
           initialEvent={editingEvent || null}

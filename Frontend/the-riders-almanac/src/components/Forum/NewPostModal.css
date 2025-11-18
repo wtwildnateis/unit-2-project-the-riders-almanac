@@ -212,23 +212,55 @@
   box-sizing: border-box;
 }
 
-.np-head .np-x{
+.np-head .np-x {
   width: 42px;
   height: 42px;
   min-width: 42px;
   border-radius: 12px;
   border: 1px solid var(--grid);
   background: rgba(255,255,255,.04);
-  display: inline-grid;             
-  place-items: center;              
-  line-height: 1;    
-              
-}
-.np-head .np-x::before{
-  content: "✕";
-  font-weight: 800;
-  font-size: 16px;
-  color: var(--ink);
-}
-.np-head .np-x:hover{ background: rgba(255,255,255,.08); }
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  line-height: 1;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.np-head .np-x:hover {
+  background: rgba(255,255,255,.08);
+}
+
+.np-drop.is-over {
+  border-style: solid;
+  background: rgba(166,217,138,.06);
+}
+
+/* Make thumb slot usable for overlay count */
+.flyer-thumb-slot {
+  position: relative; /* add to existing rules */
+}
+
+/* Highlight dropzone when dragging */
+.flyer-upload-controls.is-over {
+  border-style: solid;
+  background: rgba(166, 217, 138, 0.08);
+}
+
+/* Little "+N" badge in the preview square */
+.np-thumb-count {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #e8ebea;
+  font-size: 11px;
+  font-weight: 700;
+}

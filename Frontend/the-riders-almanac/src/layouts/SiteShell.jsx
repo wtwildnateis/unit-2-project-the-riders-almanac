@@ -8,6 +8,7 @@ const scrollKey = (p) => `ra.scroll:${p}`;
 
 export default function SiteShell() {
   const navRef = useRef(null);
+  const pageTopRef = useRef(null);
   const loc = useLocation();
   const navType = useNavigationType(); // "PUSH" | "POP" | "REPLACE"
   const prevPathRef = useRef(loc.pathname);
@@ -30,11 +31,34 @@ export default function SiteShell() {
   }, [loc.pathname]);
 
   const jumpToNavbar = (smooth = false) => {
-    const el = navRef.current;
-    if (!el) return;
-    const y = el.getBoundingClientRect().top + window.scrollY; // absolute top of navbar
-    window.scrollTo({ top: y, left: 0, behavior: smooth ? "smooth" : "auto" });
-  };
+  const el = navRef.current;
+  if (!el) return;
+
+  // where the navbar wrapper naturally sits in the document
+  const y = el.offsetTop;
+
+  window.scrollTo({
+    top: y,
+    left: 0,
+    behavior: smooth ? "smooth" : "auto",
+  });
+};
+
+const jumpToPageTop = (smooth = false) => {
+  const el = pageTopRef.current;
+  if (!el) return;
+
+const navEl = navRef.current;
+  const navHeight = navEl?.offsetHeight || 0;
+
+  const y = el.getBoundingClientRect().top + window.scrollY - navHeight;
+
+  window.scrollTo({
+    top: Math.max(y, 0),
+    left: 0,
+    behavior: smooth ? "smooth" : "auto",
+  });
+};
 
   useLayoutEffect(() => {
     const path = loc.pathname;
@@ -43,28 +67,24 @@ export default function SiteShell() {
     const isCommunityPost = path.startsWith("/community/");
 
     if (navType === "POP") {
-      if (isCommunity) {
-        jumpToNavbar(false);   
-        return;
-      }
+    // If you still want back-button scroll restore:
+    if (!isCommunity || !isHome) {
       const saved = Number(sessionStorage.getItem(scrollKey(path)) || 0);
-      window.scrollTo({ top: Number.isFinite(saved) ? saved : 0, left: 0, behavior: "auto" });
+      window.scrollTo({
+        top: Number.isFinite(saved) ? saved : 0,
+        left: 0,
+        behavior: "auto",
+      });
       return;
     }
+    // For /community specifically, just go to top of page content
+    jumpToPageTop(false);
+    return;
+  }
 
-    if (isHome) {
-      
-      jumpToNavbar(false);     
-      return;
-    }
-
-    if (isCommunity || isCommunityPost) {
-      jumpToNavbar(false);     
-      return;
-    }
-
-    jumpToNavbar(false);
-  }, [loc.pathname, navType]);
+  // For all PUSH/REPLACE navigations (normal clicks):
+  jumpToPageTop(false);
+}, [loc.pathname, navType]);
 
   const scrollToNav = () => jumpToNavbar(true); 
 
@@ -74,6 +94,7 @@ export default function SiteShell() {
     <div ref={navRef} className="sticky top-0 z-50">
       <Navbar />
     </div>
+    <div ref={pageTopRef} />
     <Outlet />
     <Footer />
   </main>

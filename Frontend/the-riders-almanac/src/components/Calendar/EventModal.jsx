@@ -19,6 +19,7 @@ const AddEventModal = ({ date, onClose, onSave, initialEvent, mode = "add" }) =>
     zip: "",
     description: "",
   });
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (initialEvent) {
@@ -118,7 +119,7 @@ const AddEventModal = ({ date, onClose, onSave, initialEvent, mode = "add" }) =>
           <h3 className="ra-modal-title">
             {mode === "edit" ? "Edit Event Details" : "Add New Biking Event"}
           </h3>
-          <button onClick={onClose} className="rounded-lg px-2 py-1 hover:bg-white/10">✕</button>
+          <button onClick={onClose} >✕</button>
         </div>
 
         <div className="ra-modal-body">
@@ -244,40 +245,81 @@ const AddEventModal = ({ date, onClose, onSave, initialEvent, mode = "add" }) =>
               />
             </label>
 
-            <label>
-              Upload Flyer (Optional)
-              <input
-                type="file"
-                accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  setUploadError("");
-                  setUploading(true);
-                  try {
-                    const url = await uploadFlyer(file);
-                    setFormData((prev) => ({ ...prev, flyer: url }));
-                  } catch (err) {
-                    setUploadError(err.message || "Upload failed");
-                  } finally {
-                    setUploading(false);
-                  }
-                }}
-              />
-            </label>
-
-            {uploading && <div className="text-sm text-white/70">Uploading…</div>}
-            {uploadError && <div className="text-sm" style={{ color: "#f87171" }}>{uploadError}</div>}
-
-            {formData.flyer && (
-              <div className="mt-2">
-                <img
-                  src={formData.flyer}
-                  alt="Flyer preview"
-                  className="max-h-44 w-full rounded-lg object-contain"
-                />
+            {/* Flyer upload */}
+            <div className="flyer-upload-block">
+              <div className="flyer-upload-label-row">
+                <span>Upload Flyer (Optional)</span>
+                {formData.flyer && (
+                  <span className="flyer-upload-hint">Re-upload to replace current flyer</span>
+                )}
               </div>
-            )}
+
+              <div className="flyer-upload-row">
+                {/* Left: button + drag/drop hint */}
+                <div className="flyer-upload-controls">
+                  <button
+                    type="button"
+                    className="flyer-upload-button"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Choose Image
+                  </button>
+                  <p className="flyer-upload-text">
+                    or drag &amp; drop a flyer image here
+                  </p>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setUploadError("");
+                      setUploading(true);
+                      try {
+                        const url = await uploadFlyer(file);
+                        setFormData((prev) => ({ ...prev, flyer: url }));
+                      } catch (err) {
+                        setUploadError(err.message || "Upload failed");
+                      } finally {
+                        setUploading(false);
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* Right: thumbnail area (spinner while uploading, image when done) */}
+                <div className="flyer-thumb-slot">
+                  {uploading ? (
+                    // Always show spinner when uploading (even if replacing an existing flyer)
+                    <div className="flyer-loading-square">
+                      <div className="flyer-spinner" aria-label="Uploading flyer" />
+                    </div>
+                  ) : formData.flyer ? (
+                    // Done uploading: show the current flyer
+                    <img
+                      src={formData.flyer}
+                      alt="Flyer preview"
+                      className="flyer-thumb-image"
+                    />
+                  ) : (
+                    // No flyer yet
+                    <div className="flyer-empty-square">
+                      <span className="flyer-empty-icon">📎</span>
+                      <span className="flyer-empty-text">No flyer yet</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {uploadError && (
+                <div className="flyer-error-text">
+                  {uploadError}
+                </div>
+              )}
+            </div>
           </form>
         </div>
 

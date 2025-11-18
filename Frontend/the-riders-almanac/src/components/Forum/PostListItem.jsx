@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { showUserName } from "../../utils/names";
+
 
 function timeAgo(iso) {
   if (!iso) return "";
@@ -14,12 +16,7 @@ function timeAgo(iso) {
 export default function PostListItem({ post }) {
   if (!post || !post.id) return null;
 
-  const author =
-    post.authorName ||
-    post.author?.username ||
-    post.author?.name ||
-    "admin";
-
+  const author = showUserName(post);
   const when = post.relativeTime || post.age || timeAgo(post.createdAt);
 
   return (

@@ -11,7 +11,7 @@
     --ink-dim: rgba(233, 236, 239, .7);
     --grid: rgba(255, 255, 255, .06);
     --grid-soft: rgba(255, 255, 255, .04);
-    --brand: #eaaa3b;
+    --brand: #806960;
     --event-bg: #2F492C;
     --event-ring: #8AE79A;
     --toolbarH: 42px;
@@ -495,7 +495,7 @@
 .up-date{
   font-size: 11.5px;
   font-weight: 700;
-  color: #FC8336;                          
+  color: #ea9e3b;                          
   line-height: 1.1;
 }
 
@@ -628,4 +628,43 @@
 }
 .ra-toolbar__group .rbc-btn-group > * + * {
   margin-left: 8px;
+}
+
+.ra-toolbar__grid--mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.ra-toolbar__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ra-toolbar__row--bottom {
+  justify-content: center;
+}
+
+
+
+@media (max-width: 640px) {
+  /* push the grid down a bit more */
+  .ra-calendar-card .rbc-toolbar {
+    margin-bottom: 50px;          /* was 15px via --toolbarGapBottom */
+  }
+
+  /* give the month view a little more vertical room inside the fixed height */
+  .ra-calendar-card .rbc-month-view {
+    min-height: 440px;            /* prevents the grid from feeling squished */
+  }
+}
+
+/* Extra breathing room under the month label on mobile */
+@media (max-width: 640px) {
+  .ra-toolbar__row--bottom {
+    margin-bottom: 8px;      /* tweak to taste: 6–10px works nicely */
+  }
 }

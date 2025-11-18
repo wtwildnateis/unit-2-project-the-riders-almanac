@@ -1,3 +1,4 @@
+
 :root {
   --page-bg: #0a0d0a;
   --ink: #e8ebea;
@@ -246,4 +247,13 @@
 
 .map-page .page-title {
   margin-top: 0;
+}
+
+
+/* Utility: hide scrollbars but keep scrolling */
+.hide-scroll {
+  scrollbar-width: none;
+}
+.hide-scroll::-webkit-scrollbar {
+  display: none;
 }

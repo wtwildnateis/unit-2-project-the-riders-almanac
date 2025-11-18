@@ -6,15 +6,18 @@ import { useAuthStore } from "../stores/auth";
 import {
   feed,
   listTags,
+  listDisabledTags,
+  listTopTags,
   createTag,
   deleteTag,
+  enableTag,
   trending as getTrending,
 } from "../lib/forumApi";
 
 import PostListItem from "../components/Forum/PostListItem";
 import NewPostModal from "../components/Forum/NewPostModal";
 
-/* ---------- helpers (no hooks here) ---------- */
+/* ---------- helpers ---------- */
 
 function tagText(tags) {
   if (!Array.isArray(tags)) return "";
@@ -74,8 +77,15 @@ export default function Community() {
 
   // tags / filters
   const [allTags, setAllTags] = useState([]);
+  const [topTags, setTopTags] = useState([]);
+  const [disabledTags, setDisabledTags] = useState([]);
   const [active, setActive] = useState([]); // array of slugs
   const tagSlugs = useMemo(() => active, [active]);
+
+  const topBarTags = useMemo(
+    () => (topTags.length ? topTags : allTags.slice(0, 5)),
+    [topTags, allTags]
+  );
 
   // ui state
   const [query, setQuery] = useState("");
@@ -99,10 +109,29 @@ export default function Community() {
     (Array.isArray(user?.roles) &&
       user.roles.some(r => ["ADMIN", "MOD", "MODERATOR"].includes(r)));
 
-  // initial load: tags + trending
-  useEffect(() => {
-    listTags().then(setAllTags).catch(console.error);
 
+  async function reloadTags() {
+    try {
+      const [enabled, top, disabled] = await Promise.all([
+        listTags(),
+        listTopTags(5),
+        isAdmin ? listDisabledTags() : Promise.resolve([]),
+      ]);
+      setAllTags(enabled);
+      setTopTags(top);
+      setDisabledTags(disabled);
+    } catch (e) {
+      console.error("Failed to reload tags", e);
+    }
+  }
+
+  // initial load: tags (enabled/disabled/top)
+  useEffect(() => {
+    reloadTags();
+  }, [isAdmin]);
+
+  // trending sidebar
+  useEffect(() => {
     let alive = true;
     (async () => {
       try {
@@ -159,21 +188,30 @@ export default function Community() {
       await createTag({ label, slug: slugify(label) });
       setNewTagName("");
       setCreating(false);
-      setAllTags(await listTags());
+      await reloadTags();
     } catch (e) {
       console.error("Failed to create tag", e);
     }
   }
 
   async function onDeleteTag(tag) {
-    if (!confirm(`Delete tag “${tag.label}”?`)) return;
+    if (!window.confirm(`Disable tag “${tag.label}”?`)) return;
     try {
       await deleteTag(tag.id);
-      const fresh = await listTags();
-      setAllTags(fresh);
       setActive(prev => prev.filter(s => s !== tag.slug));
+      await reloadTags();
     } catch (e) {
-      console.error("Failed to delete tag", e);
+      console.error("Failed to disable tag", e);
+    }
+  }
+
+  async function onEnableTag(tag) {
+    if (!window.confirm(`Re-enable tag “${tag.label}”?`)) return;
+    try {
+      await enableTag(tag.id);
+      await reloadTags();
+    } catch (e) {
+      console.error("Failed to re-enable tag", e);
     }
   }
 
@@ -265,7 +303,7 @@ export default function Community() {
             {/* ROW 2: Tags full width */}
             <div className="filters-row--tagsOnly">
               <div className="tagbar__chips">
-                {allTags.map((t) => {
+                {topBarTags.map((t) => {
                   const slug = t.slug;
                   const label = t.label?.startsWith("#") ? t.label : `# ${t.label || slug}`;
                   const isOn = active.includes(slug);
@@ -333,42 +371,44 @@ export default function Community() {
               </div>
 
               <div className="filters-panel__body">
-                <div className="filters-panel__sectionTitle">Tags</div>
-                <div className="tag-row">
-                  {allTags.map((t) => {
-                    const slug = t.slug;
-                    const label = t.label?.startsWith("#") ? t.label : `# ${t.label || slug}`;
-                    const isOn = active.includes(slug);
-                    return (
-                      <span key={slug} className="tagwrap">
-                        <button
-                          className={`ra-filter-close tagbtn ${isOn ? "is-active" : ""}`}
-                          onClick={() => toggleTag(slug)}
-                          aria-pressed={isOn}
-                        >
-                          {label}
-                        </button>
-                        {isAdmin && (
+                <div className="filters-panel__row">
+                  <div className="filters-panel__sectionTitle">Tags:</div>
+                  <div className="tag-row">
+                    {allTags.map((t) => {
+                      const slug = t.slug;
+                      const label = t.label?.startsWith("#") ? t.label : `# ${t.label || slug}`;
+                      const isOn = active.includes(slug);
+                      return (
+                        <span key={slug} className="tagwrap">
                           <button
-                            className="delx"
-                            title="Delete tag"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onDeleteTag(t);
-                            }}
+                            className={`ra-filter-close tagbtn ${isOn ? "is-active" : ""}`}
+                            onClick={() => toggleTag(slug)}
+                            aria-pressed={isOn}
                           >
-                            ×
+                            {label}
                           </button>
-                        )}
-                      </span>
-                    );
-                  })}
+                          {isAdmin && (
+                            <button
+                              className="delx"
+                              title="Delete tag"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDeleteTag(t);
+                              }}
+                            >
+                              ×
+                            </button>
+                          )}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {isAdmin && (
                   <div className="filters-panel__admin">
                     <div className="filters-panel__adminHeader">
-                      <strong>Admin: Create Tag</strong>
+                      <strong>Admin: Create Tag  </strong>
                       {!creating ? (
                         <button className="ra-filter-close" onClick={() => setCreating(true)}>
                           + Create tag
@@ -399,6 +439,29 @@ export default function Community() {
                         </div>
                       </form>
                     )}
+
+                    {disabledTags.length > 0 && (
+                      <div className="tag-admin__disabled">
+                        <div className="tag-admin__disabledTitle">Disabled tags:</div>
+                        <div className="tag-admin__disabledList">
+                          {disabledTags.map((t) => {
+                            const label =
+                              t.label?.startsWith("#") ? t.label : `# ${t.label || t.slug}`;
+                            return (
+                              <button
+                                key={t.id}
+                                type="button"
+                                className="tagbtn tagbtn--disabled"
+                                onClick={() => onEnableTag(t)}
+                              >
+                                {label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                   </div>
                 )}
               </div>
@@ -406,9 +469,6 @@ export default function Community() {
               <div className="filters-panel__footer">
                 <button className="ra-filter-close" onClick={() => setActive([])}>
                   Clear
-                </button>
-                <button className="ra-filter-primary" onClick={() => setShowFilters(false)}>
-                  Done
                 </button>
               </div>
             </div>

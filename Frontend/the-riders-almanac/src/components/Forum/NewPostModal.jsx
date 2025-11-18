@@ -11,6 +11,10 @@ export default function NewPostModal({ open, onClose, onCreated }) {
   const [allTags, setAllTags] = useState([]);
   const [selected, setSelected] = useState([]);
   const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef(null);
+  const MAX_FILES = 5;
+
+
 
   useEffect(() => {
     if (!open) return;
@@ -44,7 +48,11 @@ export default function NewPostModal({ open, onClose, onCreated }) {
 
   const onPickFiles = (e) => {
     const list = Array.from(e.target.files || []);
-    if (list.length) setFiles((prev) => [...prev, ...list]);
+    if (!list.length) return;
+    setFiles((prev) => {
+      const next = [...prev, ...list];
+      return next.slice(0, MAX_FILES);
+    });
     e.currentTarget.value = "";
   };
 
@@ -52,7 +60,11 @@ export default function NewPostModal({ open, onClose, onCreated }) {
     e.preventDefault();
     setDragOver(false);
     const list = Array.from(e.dataTransfer?.files || []);
-    if (list.length) setFiles((prev) => [...prev, ...list]);
+    if (!list.length) return;
+    setFiles((prev) => {
+      const next = [...prev, ...list];
+      return next.slice(0, MAX_FILES);
+    });
   };
 
   async function submit(e) {
@@ -78,7 +90,7 @@ export default function NewPostModal({ open, onClose, onCreated }) {
   }
 
   return (
-    
+
     <div
       role="dialog"
       aria-label="Create Post"
@@ -107,7 +119,7 @@ export default function NewPostModal({ open, onClose, onCreated }) {
           boxShadow: "0 24px 70px rgba(0,0,0,.55)",
           display: "grid",
           gridTemplateRows: "auto 1fr auto",         // header | scroller | footer
-          overflow: "hidden", 
+          overflow: "hidden",
         }}
       >
         {/* Header */}
@@ -118,14 +130,16 @@ export default function NewPostModal({ open, onClose, onCreated }) {
             justifyContent: "space-between",
             padding: "16px 18px",
             borderBottom: "1px solid var(--grid)",
-            
           }}
         >
           <h2 style={{ margin: 0, fontSize: 26, letterSpacing: .4 }}>Create Post</h2>
-          <button className="np-x ra-pillbtn ra-pillbtn--icon" onClick={onClose} aria-label="Close">
-            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ paddingLeft: "9px"}}>
-              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+          <button
+            type="button"
+            className="ra-modal-close"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            ✕
           </button>
         </div>
 
@@ -134,10 +148,10 @@ export default function NewPostModal({ open, onClose, onCreated }) {
           onSubmit={submit}
           style={{
             overflow: "auto",                       // only this scrolls
-            padding: 18,                            
+            padding: 18,
             display: "grid",
             gap: 14,
-                      overflowX: "hidden",                       
+            overflowX: "hidden",
 
           }}
         >
@@ -199,57 +213,81 @@ export default function NewPostModal({ open, onClose, onCreated }) {
           {/* Photos */}
           <div className="fld">
             <div className="lbl">Photos</div>
-            <div
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={onDrop}
-              style={{
-                border: `1px ${dragOver ? "solid" : "dashed"} var(--grid)`,
-                borderRadius: "var(--radius)",
-                padding: 14,
-                display: "grid",
-                gap: 10,
-                background: dragOver ? "rgba(166,217,138,.06)" : "linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01))",
-              }}
-            >
-              <label className="ra-pillbtn" style={{ width: "fit-content", cursor: "pointer" }}>
-                <input type="file" multiple onChange={onPickFiles} style={{ display: "none" }} />
-                Choose Files
-              </label>
-              {!!files.length ? (
-                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "grid", gap: 6 }}>
-                  {files.map((f, i) => (
-                    <li
-                      key={i}
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr auto",
-                        alignItems: "center",
-                        gap: 8,
-                        padding: "8px 10px",
-                        border: "1px solid var(--grid)",
-                        borderRadius: 10,
-                        background: "rgba(0,0,0,.2)",
-                      }}
-                    >
-                      <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {f.name}
+
+            {/* Row: dropzone + square preview, same layout as flyer */}
+            <div className="flyer-upload-row">
+              {/* Left: button + drag/drop text */}
+              <div
+                className={`flyer-upload-controls ${dragOver ? "is-over" : ""}`}
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={onDrop}
+              >
+                <button
+                  type="button"
+                  className="flyer-upload-button"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Choose Files
+                </button>
+                <p className="flyer-upload-text">
+                  or drag &amp; drop up to {MAX_FILES} photos here
+                </p>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  className="sr-only"
+                  onChange={onPickFiles}
+                />
+              </div>
+
+              {/* Right: small square – "NO PHOTOS YET" or first photo */}
+              <div className="flyer-thumb-slot">
+                {files.length === 0 ? (
+                  <div className="flyer-empty-square">
+                    <span className="flyer-empty-icon">📷</span>
+                    <span className="flyer-empty-text">NO PHOTOS YET</span>
+                  </div>
+                ) : (
+                  <>
+                    <img
+                      src={URL.createObjectURL(files[0])}
+                      alt=""
+                      className="flyer-thumb-image"
+                    />
+                    {files.length > 1 && (
+                      <span className="np-thumb-count">
+                        +{files.length - 1}
                       </span>
-                      <button
-                        type="button" 
-                        onClick={() => setFiles((prev) => prev.filter((_, idx) => idx !== i))}
-                        className="ra-pillbtn ra-pillbtn--icon"
-                        aria-label="Remove file" 
-                      >
-                        ×
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <span className="dim">or drag & drop here</span>
-              )}
+                    )}
+                  </>
+                )}
+              </div>
             </div>
+
+            {/* Full preview grid underneath */}
+            {files.length > 0 && (
+              <div className="np-previews">
+                {files.map((f, i) => (
+                  <div key={i} className="np-thumb">
+                    <img src={URL.createObjectURL(f)} alt="" />
+                    <button
+                      type="button"
+                      className="np-thumb-x"
+                      aria-label="Remove image"
+                      onClick={() =>
+                        setFiles((prev) => prev.filter((_, idx) => idx !== i))
+                      }
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </form>
 

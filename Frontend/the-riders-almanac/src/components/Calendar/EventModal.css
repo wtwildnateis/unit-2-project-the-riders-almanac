@@ -1,3 +1,7 @@
+:root {
+  --flyer-slot-size: 130px;
+}
+
 /* Overlay  */
 .ra-modal-overlay {
     position: fixed;
@@ -44,22 +48,26 @@
     color: #e7fbe9;
 }
 
-.ra-modal-header>button,
 .ra-modal-close {
-    background: transparent;
-    border: 1px solid var(--ring, rgba(166, 217, 138, .18));
-    border-radius: 12px;
-    width: 40px;
-    height: 40px;
-    display: grid;
-    place-items: center;
-    color: var(--accent, #a6d98a);
-    cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--ring, rgba(166, 217, 138, .18));
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  line-height: 1;
+  font-size: 20px;
+  color: var(--accent, #a6d98a);
+  cursor: pointer;
 }
 
-.ra-modal-header>button:hover,
 .ra-modal-close:hover {
-    background: rgba(166, 217, 138, .10);
+  background: rgba(166, 217, 138, .10);
 }
 
 /*Body */
@@ -365,3 +373,165 @@
     margin-top: -8px;
     margin-bottom: -4px;
 }
+
+/* Flyer upload layout */
+.flyer-upload-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.flyer-upload-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.flyer-upload-hint {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(232, 235, 234, 0.6);
+}
+
+.flyer-upload-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) 140px;
+  gap: 14px;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .flyer-upload-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left side: button + text */
+.flyer-upload-controls {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  background: rgba(11, 15, 12, 0.9);
+  min-height: var(--flyer-slot-size);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;      
+  gap: 8px;                 
+  text-align: center;       
+}
+
+.flyer-upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--ring, rgba(166, 217, 138, 0.25));
+  background: linear-gradient(180deg, rgba(166, 217, 138, 0.16), rgba(166, 217, 138, 0.08));
+  color: #e8f9ee;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  max-width: 260px;
+}
+
+.flyer-upload-button:hover {
+  background: linear-gradient(180deg, rgba(166, 217, 138, 0.24), rgba(166, 217, 138, 0.10));
+}
+
+.flyer-upload-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(232, 235, 234, 0.75);
+}
+
+/* Right side: thumb / loader square */
+.flyer-thumb-slot {
+  width: var(--flyer-slot-size);
+  height: var(--flyer-slot-size);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: radial-gradient(75% 75% at 30% 20%, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.6));
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+/* Loading state square */
+.flyer-loading-square {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.flyer-spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 3px solid rgba(232, 235, 234, 0.25);
+  border-top-color: var(--accent, #a6d98a);
+  animation: flyer-spin 0.75s linear infinite;
+}
+
+@keyframes flyer-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty state */
+.flyer-empty-square {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: rgba(232, 235, 234, 0.75);
+  font-size: 11px;
+  gap: 4px;
+}
+
+.flyer-empty-icon {
+  font-size: 18px;
+}
+
+.flyer-empty-text {
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Actual image */
+.flyer-thumb-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Error text */
+.flyer-error-text {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #f87171;
+}
+
+/* Utility for hidden input */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+

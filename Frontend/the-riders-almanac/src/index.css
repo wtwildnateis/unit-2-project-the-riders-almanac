@@ -79,16 +79,6 @@ body { margin: 0; background: #000; color: #fff; }
 @media (min-width: 768px) { .title-logo { width: 18rem; } }
 @media (min-width: 1024px){ .title-logo { width: 20rem; } }
 
-/* Fade-in arrow after delay */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.fade-in-arrow {
-  animation: fadeInUp .6s ease-out both;
-  animation-delay: 1.6s;   /* arrow appears a bit later */
-  font-size: 1.25rem;
-}
 
 .title-hero{
   position: relative;
@@ -153,11 +143,25 @@ body { margin: 0; background: #000; color: #fff; }
   from{ opacity:0; transform: translateY(6px); }
   to{   opacity:1; transform: translateY(0); }
 }
-.fade-in-arrow{
-  margin-top: 1.5rem;
-  font-size: 1.25rem;
-  opacity: 0;
+.fade-in-arrow svg {
+  width: 5rem;   /* make wider */
+  height: 1.8rem;  /* control height */
+  margin-top: -25px;
   animation: fadeInUp .6s ease-out both;
   animation-delay: 2s;
 }
 
+html, body {
+  scrollbar-width: none;        /* no scrollbar */
+}
+
+/* IE / old Edge */
+body {
+  -ms-overflow-style: none;     /* no scrollbar */
+}
+
+/* Chrome, Safari, new Edge, etc. */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;                /* hide scrollbar */
+}

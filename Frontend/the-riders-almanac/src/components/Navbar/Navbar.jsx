@@ -41,12 +41,12 @@ export default function Navbar() {
   const accountTriggerCls = [linkBase, isAccountActive ? "text-[#8AE79A]" : "text-white/95 hover:text-white"].join(" ");
 
   return (
-    <header className="w-full sticky top-0 z-50 bg-[#0c0f0d]/95 backdrop-blur border-b border-white/5">
+    <header id="ra-navbar" className="w-full sticky top-0 z-50 bg-[#0c0f0d]/95 backdrop-blur border-b border-white/5">
       <div className="mx-auto max-w-[1200px] h-16 px-6 md:px-8 lg:px-10 flex items-center justify-between">
         <nav className="hidden md:flex items-center gap-7">
           <NavLink to="/home" className={linkCls}>Home</NavLink>
-          <NavLink to="/events" className={linkCls}>Calendar</NavLink>
-          <NavLink to="/resources" className={linkCls}>Map</NavLink>
+          <NavLink to="/events" className={linkCls}>Events</NavLink>
+          <NavLink to="/resources" className={linkCls}>Resources</NavLink>
           <NavLink to="/community" className={linkCls}>Community</NavLink>
           <NavLink to="/contact-us" className={linkCls}>Contact Us</NavLink>
         </nav>
@@ -86,8 +86,8 @@ export default function Navbar() {
       >
         <nav className="grid gap-2">
           <NavLink to="/home" onClick={() => setOpen(false)} className={linkCls}>Home</NavLink>
-          <NavLink to="/events" onClick={() => setOpen(false)} className={linkCls}>Calendar</NavLink>
-          <NavLink to="/resources" onClick={() => setOpen(false)} className={linkCls}>Map</NavLink>
+          <NavLink to="/events" onClick={() => setOpen(false)} className={linkCls}>Events</NavLink>
+          <NavLink to="/resources" onClick={() => setOpen(false)} className={linkCls}>Resources</NavLink>
           <NavLink to="/community" onClick={() => setOpen(false)} className={linkCls}>Community</NavLink>
           <NavLink to="/contact-us" onClick={() => setOpen(false)} className={linkCls}>Contact Us</NavLink>
 

@@ -7,7 +7,7 @@
 
   --ring:rgba(166,217,138,.18);
   --accent:#a6d98a;                 /* site green */
-  --brand:#eaaa3b;                  /* calendar orange */
+  --brand:#e16634;                  /* calendar orange */
   --shadow:0 20px 50px rgba(0,0,0,.45);
   --radius:14px;
 }
@@ -80,8 +80,8 @@
 .tagbar__chips{ display:flex; flex-wrap:wrap; gap:8px; }
 
 .tagbtn{
-  border:1px solid rgba(234,170,59,.28);
-  background:rgba(234,170,59,.08);
+  border:1px solid rgba(225,102,52,.28);
+  background:rgba(225,102,52,.08);
   color:var(--accent);
   border-radius:12px;
   padding:6px 10px;
@@ -93,8 +93,10 @@
   border-color:var(--accent);
 }
 .tagbtn.is-active{
-  background:rgba(234,170,59,.15);
+  background:var(--accent);
   border-color:var(--accent);
+  color: #05190f;
+  box-shadow: 0 0 0 1px rgba(225,102,52, .7);
 }
 
 /* ====== FEED LIST / CARDS ====== */
@@ -124,8 +126,8 @@
 .post-chip{
   padding:4px 10px;
   border-radius:999px;
-  border:1px solid rgba(234,170,59,.28);
-  background:rgba(234,170,59,.08);
+  border:1px solid rgba(225,102,52,.28);
+  background:rgba(225,102,52,.08);
   color:var(--brand);
   font-size:11px; font-weight:700; line-height:1;
 }
@@ -141,15 +143,16 @@
   background:rgba(10,13,10,.98);
   border-left:1px solid var(--ring);
   box-shadow:var(--shadow);
-  padding:16px;
-  display:grid; grid-template-rows:auto 1fr auto; gap:12px; z-index:5;
+  padding:12px 14px;                          /* was 16px */
+  display:grid; grid-template-rows:auto 1fr auto; gap:8px; /* was gap:12px */
+  z-index:5;
   animation:slideIn .18s ease-out;
 }
 @keyframes slideIn{ from{transform:translateX(100%);opacity:.4;} to{transform:translateX(0);opacity:1;} }
 .filters-panel__head{ display:flex; justify-content:space-between; align-items:center; }
-.filters-panel__body{ overflow:auto; display:grid; gap:12px; }
+.filters-panel__body{ overflow:auto; display:grid; gap:8px; }
 .filters-panel__sectionTitle{ font-size:12px; opacity:.8; }
-.filters-panel__admin{ border-top:1px dashed var(--ring); padding-top:10px; }
+.filters-panel__admin{ border-top:1px dashed var(--ring); padding-top:8px; margin-top:4px; }
 .filters-panel__footer{ display:flex; justify-content:flex-end; gap:8px; }
 
 .tag-row{ display:flex; flex-wrap:wrap; gap:8px; }
@@ -449,4 +452,107 @@ background: rgba(255, 255, 255, .08);
 .ra-pillbtn--primary:hover{
   background: rgba(255,255,255,.08);
   border-color: rgba(255,255,255,.10);
+}
+
+.tagbtn {
+  border: 1px solid rgba(225,102,52,.28);       /* #e16634 */
+  background: rgba(225,102,52,.08);
+  color: var(--accent);
+  border-radius: 12px;
+  padding: 6px 10px;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.tagbtn:hover {
+  background: rgba(225,102,52,.18);
+  border-color: var(--accent);
+}
+
+/* ACTIVE STATE – clearly ON */
+.tagbtn.is-active {
+  background: var(--accent) !important;         /* solid green */
+  border-color: var(--accent) !important;
+  color: #05190f !important;                    /* dark text for contrast */
+  box-shadow: 0 0 0 1px rgba(225,102,52,.7);    /* subtle orange ring */
+}
+
+.tag-admin__form{
+  display:grid;
+  gap:8px;
+  margin-top:6px;
+}
+
+.tag-admin__input{
+  width:100%;
+  padding:6px 8px;
+  border-radius:8px;
+  border:1px solid rgba(232,235,234,.22);
+  background:#050806;
+  color:var(--ink);
+  font-size:13px;
+}
+
+.tag-admin__actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:4px;
+}
+
+.tag-admin__disabled{
+  margin-top:8px;
+  padding-top:6px;
+  border-top:1px dashed rgba(255,255,255,.06);
+}
+
+.tag-admin__disabledTitle{
+  font-size:12px;
+  opacity:.7;
+  margin-bottom:4px;
+}
+
+.tag-admin__disabledList{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.tagbtn--disabled{
+  opacity:.42;
+  border-style:dashed;
+}
+
+.tagbtn--disabled:hover{
+  opacity:.9;
+}
+
+.filters-panel__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+
+.filters-panel__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* keep the label tight against the chips */
+.filters-panel__sectionTitle {
+  font-size: 12px;
+  opacity: .8;
+  padding-top: 4px;      /* nudges it down to align with pill centers */
+  flex: 0 0 auto;
+}
+
+.tag-row {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }

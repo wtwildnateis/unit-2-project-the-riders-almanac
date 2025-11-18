@@ -1,7 +1,7 @@
 import { useState } from "react";
 import MapComponent from "./Map";
 import mapPinLogo from "../../assets/map_pin_logo.png";
-import "./maps.css"; // NEW
+import "./maps.css"; 
 
 const filterConfig = {
   "Bike Shops": { keyword: "bike shop", type: "bicycle_store" },

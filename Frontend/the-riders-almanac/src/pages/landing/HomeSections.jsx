@@ -184,26 +184,31 @@ export default function HomeSections() {
                     ) : null}
                   </div>
 
-                  {/* RIGHT: flyer */}
+                    {/* RIGHT: flyer */}
                   <div className="justify-self-end">
                     <div className="relative h-[150px] w-[150px] md:h-[160px] md:w-[160px] rounded-2xl overflow-hidden">
-                      {ev.flyerUrl ? (
-                        <img
-                          src={ev.flyerUrl}
-                          alt=""
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                        />
-                      ) : (
-                        <div className="pointer-events-none h-full w-full grid place-items-center text-white/75 bg-[radial-gradient(75%_75%_at_30%_20%,rgba(255,255,255,.10),rgba(255,255,255,.04)_60%,rgba(255,255,255,.02)_100%)]">
-                          <div className="text-center">
-                            <svg width="32" height="32" viewBox="0 0 24 24" className="mx-auto mb-2 opacity-85">
-                              <path d="M4 7h3l2-2h6l2 2h3v12H4z" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                              <circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                            </svg>
-                            <span className="text-[11px] tracking-[0.18em] uppercase">No flyer</span>
+                      {(() => {
+                        const flyerSrc =
+                          ev.flyer || ev.flyerUrl || ev.flyer_url || ev.flyerImage || null;
+
+                        return flyerSrc ? (
+                          <img
+                            src={flyerSrc}
+                            alt=""
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                          />
+                        ) : (
+                          <div className="pointer-events-none h-full w-full grid place-items-center text-white/75 bg-[radial-gradient(75%_75%_at_30%_20%,rgba(255,255,255,.10),rgba(255,255,255,.04)_60%,rgba(255,255,255,.02)_100%)]">
+                            <div className="text-center">
+                              <svg width="32" height="32" viewBox="0 0 24 24" className="mx-auto mb-2 opacity-85">
+                                <path d="M4 7h3l2-2h6l2 2h3v12H4z" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                                <circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                              </svg>
+                              <span className="text-[11px] tracking-[0.18em] uppercase">No flyer</span>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        );
+                      })()}
                       <div className="pointer-events-none absolute inset-0 ring-1 ring-white/10" />
                     </div>
                   </div>
