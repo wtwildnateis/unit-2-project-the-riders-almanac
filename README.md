@@ -12,6 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
   <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" />
+  <img src="https://img.shields.io/badge/Lombok-CA2C92?style=for-the-badge&logo=lombok&logoColor=white" />
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=000000" />
   <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=000000" />
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=ffffff" />
@@ -62,7 +63,8 @@ This project was developed as the capstone for LaunchCode’s Unit 2 Full-Stack 
 - JPA / Hibernate  
 - MySQL  
 - Maven  
-- JWT Authentication  
+- JWT Authentication
+- Lombok
 
 ### **Frontend**
 - React (Vite)  
@@ -122,6 +124,9 @@ Below are instructions for setting up **both the backend and frontend** locally.
 ---
 
 ## 🛠 **Backend Setup (Spring Boot)**
+
+> [!NOTE]  
+> The backend uses Lombok for generating getters, setters, and constructors. Make sure your IDE has the Lombok plugin installed and annotation processing enabled, or you may see errors where Lombok-generated code is used.
 
 ### **1. Clone the Repository**
 ```bash
