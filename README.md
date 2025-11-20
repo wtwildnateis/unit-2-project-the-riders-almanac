@@ -28,7 +28,7 @@
 ---
 
 # 📚 **Table of Contents**
-- [🚴‍♂️ The Rider’s Almanac](#-the-riders-almanac)
+- [🚴‍♂️ The Rider’s Almanac](#%E2%80%8D%EF%B8%8F-the-riders-almanac)
 - [🧰 Tech Stack](#-tech-stack)
 - [🔑 API Setup](#-api-setup-required-before-running-the-app)
 - [📦 Installation & Setup](#-installation--setup)
