@@ -301,5 +301,6 @@ Frontend available at:
 
 - Certain small-screen dimensions require layout tweaks  
 - Scroll-lock behavior on modals can be finicky  
-- Calendar layout may shift on unique aspect ratios
+- User ability to change info (username, password, etc) currently not wired.
+- Admin controls for forum (lock, hide post, ban user) not functional.
 - Occasional duplicate trending queries under heavy load
