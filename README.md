@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/RAHeader.gif" 
+  <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/ReadMeMedia/RAHeader.gif" 
     alt="The Rider's Almanac Banner"
     width="2000"
     />
@@ -202,28 +202,28 @@ Frontend available at:
 
 **Home Page**
 
- <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/RAHome.gif" 
+ <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/ReadMeMedia/RAHome.gif" 
     alt="Home Page Preview"
     width="2000"
     />
 
 **Events Page**
 
- <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/RACalendar.gif" 
+ <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/ReadMeMedia/RACalendar.gif" 
     alt="Events Calendar Preview"
     width="2000"
     />
 
 **Maps Page**
 
-  <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/RAMaps.gif" 
+  <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/ReadMeMedia/RAMaps.gif" 
     alt="Map Preview"
     width="2000"
     />   
 
 **Community Page**
 
-  <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/RAForum.gif" 
+  <img src="https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/ReadMeMedia/RAForum.gif" 
     alt="Community Forums Preview"
     width="2000"
     />   
@@ -236,7 +236,7 @@ Frontend available at:
 
 <div align="center">
 
-![Wireframe Preview](https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/RAWireframe.png)
+![Wireframe Preview](https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/ReadMeMedia/RAWireframe.png)
 
 </div>
 
@@ -248,7 +248,7 @@ Frontend available at:
 
 <div align="center">
 
-![ERD Preview](https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/RAERD.png)
+![ERD Preview](https://raw.githubusercontent.com/wtwildnateis/unit-2-project-the-riders-almanac/refs/heads/main/ReadMeMedia/RAERD.png)
 
 </div>
 
