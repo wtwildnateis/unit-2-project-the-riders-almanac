@@ -37,7 +37,7 @@
   - [🎨 Frontend Setup](#-frontend-setup-react--vite)
 - [🖥️ Preview](#️-preview)
 - [🗺️ Wireframes](#️-wireframes)
-- [🗃️ ER Diagram](#-er-diagram)
+- [🗃️ ER Diagram](#%EF%B8%8F-er-diagram)
 - [🚀 Core Features](#-core-features)
 - [🔮 Future Features](#-future-features)
 - [🧩 Known Issues / Unsolved Problems](#-known-issues--unsolved-problems)
