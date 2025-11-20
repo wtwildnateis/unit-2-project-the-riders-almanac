@@ -28,18 +28,18 @@
 ---
 
 # 📚 **Table of Contents**
-- [🚴‍♂️ The Rider’s Almanac](#the-riders-almanac)
-- [🧰 Tech Stack](#tech-stack)
-- [🔑 API Setup](#api-setup-required-before-running-the-app)
-- [📦 Installation & Setup](#installation--setup)
-  - [🛠 Backend Setup](#backend-setup-spring-boot)
-  - [🎨 Frontend Setup](#frontend-setup-react--vite)
-- [🖥️ Preview](#️preview)
-- [🗺️ Wireframes](#️wireframes)
-- [🗃️ ER Diagram](#er-diagram)
-- [🚀 Core Features](#core-features)
-- [🔮 Future Features](#future-features)
-- [🧩 Known Issues / Unsolved Problems](#known-issues--unsolved-problems)
+- [🚴‍♂️ The Rider’s Almanac](#-the-riders-almanac)
+- [🧰 Tech Stack](#-tech-stack)
+- [🔑 API Setup](#-api-setup-required-before-running-the-app)
+- [📦 Installation & Setup](#-installation--setup)
+  - [🛠 Backend Setup](#-backend-setup-spring-boot)
+  - [🎨 Frontend Setup](#-frontend-setup-react--vite)
+- [🖥️ Preview](#️-preview)
+- [🗺️ Wireframes](#️-wireframes)
+- [🗃️ ER Diagram](#-er-diagram)
+- [🚀 Core Features](#-core-features)
+- [🔮 Future Features](#-future-features)
+- [🧩 Known Issues / Unsolved Problems](#-known-issues--unsolved-problems)
 
 ---
 
