@@ -1,3 +1,5 @@
 package com.ridersalmanac.riders_almanac.auth.dto;
 
-public record AuthResponse(String token) {}
+import com.ridersalmanac.riders_almanac.users.dto.MeResponse;
+
+public record AuthResponse(String token, MeResponse user) {}

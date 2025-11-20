@@ -1,5 +1,7 @@
 package com.ridersalmanac.riders_almanac.events;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +29,16 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findByIdAndIsDeletedFalse(Long id);
 
     boolean existsByIdAndOwner_IdAndIsDeletedFalse(Long id, Long ownerId);
+
+    @Query("""
+      select e
+      from Event e
+      where e.isDeleted = false
+        and e.status = com.ridersalmanac.riders_almanac.events.Event$Status.ACTIVE
+        and coalesce(e.end, e.start) >= :now
+      order by e.start asc
+    """)
+    Page<Event> findUpcoming(@Param("now") Instant now, Pageable pageable);
+
+
 }

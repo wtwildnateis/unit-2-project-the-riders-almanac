@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
+import com.ridersalmanac.riders_almanac.forum.dto.TagDto;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
@@ -21,11 +23,24 @@ public class ForumService {
 
     private final ForumRepository posts;
     private final CommentRepository comments;
-    private final PostImageRepository images;
     private final UserRepository users;
     private final ModerationService moderation;
+    private final TagRepository tags;
 
     // posts
+
+    private java.util.Set<Tag> resolveTags(java.util.List<String> slugs) {
+        if (slugs == null || slugs.isEmpty()) return java.util.Set.of();
+        var set = new java.util.HashSet<Tag>();
+        for (var s : slugs) {
+            if (s == null || s.isBlank()) continue;
+            var tag = tags.findBySlugIgnoreCase(s.trim())
+                    .filter(Tag::isEnabled)
+                    .orElseThrow(() -> new IllegalArgumentException("Unknown or disabled tag: " + s));
+            set.add(tag);
+        }
+        return set;
+    }
 
     @Transactional
     public PostResponse createPost(Long authorId, PostCreateRequest req) {
@@ -35,7 +50,6 @@ public class ForumService {
                 .author(author)
                 .title(req.title())
                 .body(req.body())
-                .tags(req.tags())
                 .status(Post.Status.PUBLISHED)
                 .isDeleted(false)
                 .lastActivityAt(Instant.now())
@@ -50,17 +64,32 @@ public class ForumService {
                         .build());
             }
         }
-
+        p.setTagEntities(resolveTags(req.tags()));
         p = posts.save(p);
         return toDto(p);
     }
 
-    public PageResponse<PostResponse> feed(int page, int size) {
-        Pageable pageable = PageRequest.of(Math.max(page, 0), Math.min(size, 50));
-        List<PostResponse> items = posts.findFeed(pageable).stream().map(this::toDto).toList();
-        // cheap total (you can add a count query later)
-        long total = posts.count();
-        return new PageResponse<>(items, pageable.getPageNumber(), pageable.getPageSize(), total);
+    public PageResponse<PostResponse> feed(int page, int size,
+                                           java.util.List<String> tagSlugs,
+                                           String match) {
+        var pageable = org.springframework.data.domain.PageRequest.of(
+                Math.max(page, 0), Math.min(size, 50),
+                org.springframework.data.domain.Sort.by("lastActivityAt").descending()
+                        .and(org.springframework.data.domain.Sort.by("createdAt").descending())
+        );
+
+        org.springframework.data.domain.Page<Post> pageObj;
+        if (tagSlugs == null || tagSlugs.isEmpty()) {
+            pageObj = posts.findFeed(pageable);
+        } else {
+            var slugs = tagSlugs.stream().map(String::trim).filter(s -> !s.isBlank()).toList();
+            pageObj = "AND".equalsIgnoreCase(match)
+                    ? posts.findFeedByAllTags(slugs, slugs.size(), pageable)
+                    : posts.findFeedByAnyTag(slugs, pageable);
+        }
+
+        var items = pageObj.getContent().stream().map(this::toDto).toList();
+        return new PageResponse<>(items, pageObj.getNumber(), pageObj.getSize(), pageObj.getTotalElements());
     }
 
     public PostResponse getPost(Long id) {
@@ -76,7 +105,20 @@ public class ForumService {
 
         if (req.title() != null) p.setTitle(req.title());
         if (req.body() != null) p.setBody(req.body());
-        if (req.tags() != null) p.setTags(req.tags());
+        if (req.tags() != null) {
+            p.setTagEntities(resolveTags(req.tags()));
+        }
+        if (req.imageUrls() != null) {
+            // wipe and re-add simple list; or implement smarter diffing if you prefer
+            p.getImages().clear();
+            for (int i = 0; i < req.imageUrls().size(); i++) {
+                p.getImages().add(PostImage.builder()
+                        .post(p)
+                        .url(req.imageUrls().get(i))
+                        .sortOrder(i)
+                        .build());
+            }
+        }
         p.setLastActivityAt(Instant.now());
         return toDto(p);
     }
@@ -122,11 +164,6 @@ public class ForumService {
         return toDto(c);
     }
 
-    public List<CommentResponse> listComments(Long postId) {
-        var page = comments.findPageForPost(postId, PageRequest.of(0, 50)); // first 50, tweak as you like
-        return page.getContent().stream().map(this::toDto).toList();
-    }
-
     @Transactional
     public CommentResponse updateComment(Long id, Long currentUserId, CommentUpdateRequest req) {
         Comment c = comments.findById(id).orElseThrow();
@@ -161,7 +198,7 @@ public class ForumService {
         );
     }
 
-// post rules & mapping
+    // post rules & mapping
 
     private void ensureCanModify(User owner, User current) {
         if (owner.getId().equals(current.getId())) return;
@@ -172,26 +209,8 @@ public class ForumService {
     }
 
     private PostResponse toDto(Post p) {
-        List<String> imgs = p.getImages().stream()
-                .sorted((a, b) -> Integer.compare(
-                        a.getSortOrder() == null ? 0 : a.getSortOrder(),
-                        b.getSortOrder() == null ? 0 : b.getSortOrder()))
-                .map(PostImage::getUrl)
-                .toList();
-
-        return new PostResponse(
-                p.getId(),
-                p.getTitle(),
-                p.getBody(),
-                p.getTags(),
-                p.getAuthor().getId(),
-                p.getAuthor().getUsername(),
-                imgs,
-                p.isLocked(),
-                p.getCreatedAt(),
-                p.getUpdatedAt(),
-                p.getLastActivityAt()
-        );
+        // Use the record factory so we don't have to manage the 12th 'score' field here.
+        return PostResponse.from(p);
     }
 
     private CommentResponse toDto(Comment c) {
@@ -222,7 +241,6 @@ public class ForumService {
         }
     }
 
-
     @Transactional
     public PostResponse lockPost(Long postId, Long moderatorId, String reason) {
         Post p = posts.findByIdAndIsDeletedFalse(postId).orElseThrow();
@@ -238,9 +256,9 @@ public class ForumService {
         p.setLastActivityAt(Instant.now());
         moderation.log(
                 mod,
-                com.ridersalmanac.riders_almanac.moderation.ModerationLog.TargetType.POST,
+                ModerationLog.TargetType.POST,
                 p.getId(),
-                com.ridersalmanac.riders_almanac.moderation.ModerationLog.Action.LOCK,
+                ModerationLog.Action.LOCK,
                 reason == null ? "Locked" : reason
         );
         return toDto(p);
@@ -261,9 +279,9 @@ public class ForumService {
         p.setLastActivityAt(Instant.now());
         moderation.log(
                 mod,
-                com.ridersalmanac.riders_almanac.moderation.ModerationLog.TargetType.POST,
+                ModerationLog.TargetType.POST,
                 p.getId(),
-                com.ridersalmanac.riders_almanac.moderation.ModerationLog.Action.UNLOCK,
+                ModerationLog.Action.UNLOCK,
                 reason == null ? "Unlocked" : reason
         );
         return toDto(p);
@@ -329,4 +347,24 @@ public class ForumService {
                 .anyMatch(n -> n.equals("ROLE_ADMIN") || n.equals("ROLE_MOD"));
         if (!isStaff) throw new SecurityException("Moderator role required");
     }
+
+    public PageResponse<PostResponse> trending(int limit, Duration window) {
+        int pageSize = Math.max(1, Math.min(limit, 50));
+        var pageable = PageRequest.of(0, pageSize);
+        var since = Instant.now().minus(window);
+        var page = posts.findTrending(since, pageable);
+        return PageResponse.of(page, PostResponse::from); // see factory below
+    }
+
+    public List<TagDto> topTags(int limit) {
+        // clamp limit between 1 and 20
+        int size = Math.max(1, Math.min(limit, 20));
+        var pageable = PageRequest.of(0, size);
+
+        // NOTE: 'posts' is the ForumRepository field you already use for trending()
+        return posts.findTopTags(pageable).stream()
+                .map(t -> new TagDto(t.getId(), t.getSlug(), t.getLabel()))
+                .toList();
+    }
+
 }

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/api/forum")
@@ -22,9 +23,11 @@ public class ForumController {
     @GetMapping("/posts")
     public PageResponse<PostResponse> feed(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) java.util.List<String> tags,
+            @RequestParam(defaultValue = "OR") String match // OR | AND
     ) {
-        return service.feed(page, size);
+        return service.feed(page, size, tags, match);
     }
 
     @GetMapping("/posts/{id}")
@@ -107,5 +110,28 @@ public class ForumController {
         return users.findByUsername(principal.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"))
                 .getId();
+    }
+
+    @GetMapping("/posts/trending")
+    public PageResponse<PostResponse> trending(
+            @RequestParam(defaultValue = "7d") String window,
+            @RequestParam(defaultValue = "5") int limit
+    ) {
+        Duration win = parseWindow(window);              // e.g., "7d", "24h", "30m"
+        return service.trending(limit, win);             // keep your original order if you like
+    }
+
+    // Simple "7d / 24h / 30m" parser
+    private Duration parseWindow(String raw) {
+        if (raw == null || raw.isBlank()) return Duration.ofDays(7);
+        var m = java.util.regex.Pattern.compile("(?i)^(\\d+)\\s*([dhm])$").matcher(raw.trim());
+        if (!m.find()) return Duration.ofDays(7);
+        long n = Long.parseLong(m.group(1));
+        return switch (m.group(2).toLowerCase()) {
+            case "d" -> Duration.ofDays(n);
+            case "h" -> Duration.ofHours(n);
+            case "m" -> Duration.ofMinutes(n);
+            default -> Duration.ofDays(7);
+        };
     }
 }
